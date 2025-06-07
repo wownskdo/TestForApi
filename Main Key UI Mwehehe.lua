@@ -139,7 +139,7 @@ local function createUI(name, scripturl, allowedPlayersUrl, foldername, notifica
         local timeDifference = currentTime - savedTime
         
         -- 24 hours = 86400 seconds
-        return timeDifference < 86400
+        return timeDifference < 300
     end
 
     -- Function to load saved key data
