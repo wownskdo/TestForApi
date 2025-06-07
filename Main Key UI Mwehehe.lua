@@ -238,26 +238,42 @@ local function createUI(name, scripturl, allowedPlayersUrl, foldername, notifica
 
     -- Function to format time for notification
     local function formatTime(timestamp)
-        local date = os.date("*t", timestamp)
-        local hour = date.hour
-        local minute = date.min
-        local ampm = hour >= 12 and "PM" or "AM"
+        -- Simple fallback formatting for Roblox
+        local currentTime = os.time()
+        local timeDiff = timestamp - currentTime
+        local hoursFromNow = math.floor(timeDiff / 3600)
         
-        -- Convert to 12-hour format
-        if hour == 0 then
-            hour = 12
-        elseif hour > 12 then
-            hour = hour - 12
+        -- Try to use os.date, with fallback
+        local success, dateTable = pcall(function()
+            return os.date("*t", timestamp)
+        end)
+        
+        if success and dateTable then
+            local hour = dateTable.hour
+            local minute = dateTable.min
+            local day = dateTable.day
+            local month = dateTable.month
+            local ampm = hour >= 12 and "PM" or "AM"
+            
+            -- Convert to 12-hour format
+            if hour == 0 then
+                hour = 12
+            elseif hour > 12 then
+                hour = hour - 12
+            end
+            
+            -- Format minute with leading zero if needed
+            local formattedMinute = minute < 10 and "0" .. minute or tostring(minute)
+            
+            -- Get month names
+            local months = {"Jan", "Feb", "Mar", "Apr", "May", "Jun", 
+                           "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"}
+            
+            return hour .. ":" .. formattedMinute .. ampm .. " " .. months[month] .. " " .. day
+        else
+            -- Fallback if os.date doesn't work
+            return "in 24 hours"
         end
-        
-        -- Format minute with leading zero if needed
-        local formattedMinute = string.format("%02d", minute)
-        
-        -- Get month names
-        local months = {"Jan", "Feb", "Mar", "Apr", "May", "Jun", 
-                       "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"}
-        
-        return string.format("%d:%s%s %s %d", hour, formattedMinute, ampm, months[date.month], date.day)
     end
 
     -- Return the created UI
