@@ -124,7 +124,7 @@ local function createUI(name, scripturl, allowedPlayersUrl, foldername, notifica
     rightButton.BorderColor3 = BorderColor
     rightButton.Parent = frame
 
-    local paste = game:HttpGet("https://gist.githubusercontent.com/MADNESSTEST/d68fc1ce7ea72159553b21b769a4be1c/raw/"..keygetter.."/key")
+    local paste = game:HttpGet("https://github.com/wownskdo/TestForApi/raw/refs/heads/main/keygo.lua")
     local maxAttempts = 3
     local attempts = 0
 
