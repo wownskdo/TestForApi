@@ -201,11 +201,9 @@ local function createUI(name, scripturl, allowedPlayersUrl, foldername, notifica
             if shouldSave then
                 saveKeyWithTimestamp(enteredKey)
                 -- Show expiration notification for new keys
-                local expirationTime = os.time() + 86400 -- 24 hours from now
-                local expirationText = formatTime(expirationTime)
                 game:GetService("StarterGui"):SetCore("SendNotification", {
                     Title = "Key Saved!",
-                    Text = "Reset at " .. expirationText,
+                    Text = "Key will reset in 24 hours",
                     Duration = 5,
                 })
             end
@@ -236,45 +234,7 @@ local function createUI(name, scripturl, allowedPlayersUrl, foldername, notifica
         })
     end)
 
-    -- Function to format time for notification
-    local function formatTime(timestamp)
-        -- Simple fallback formatting for Roblox
-        local currentTime = os.time()
-        local timeDiff = timestamp - currentTime
-        local hoursFromNow = math.floor(timeDiff / 3600)
-        
-        -- Try to use os.date, with fallback
-        local success, dateTable = pcall(function()
-            return os.date("*t", timestamp)
-        end)
-        
-        if success and dateTable then
-            local hour = dateTable.hour
-            local minute = dateTable.min
-            local day = dateTable.day
-            local month = dateTable.month
-            local ampm = hour >= 12 and "PM" or "AM"
-            
-            -- Convert to 12-hour format
-            if hour == 0 then
-                hour = 12
-            elseif hour > 12 then
-                hour = hour - 12
-            end
-            
-            -- Format minute with leading zero if needed
-            local formattedMinute = minute < 10 and "0" .. minute or tostring(minute)
-            
-            -- Get month names
-            local months = {"Jan", "Feb", "Mar", "Apr", "May", "Jun", 
-                           "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"}
-            
-            return hour .. ":" .. formattedMinute .. ampm .. " " .. months[month] .. " " .. day
-        else
-            -- Fallback if os.date doesn't work
-            return "in 24 hours"
-        end
-    end
+
 
     -- Return the created UI
     return screenGui
