@@ -126,6 +126,7 @@ local function createUI(name, scripturl, allowedPlayersUrl, foldername, notifica
 
     local keygetter = game:HttpGet("https://raw.githubusercontent.com/MADNESSTEST/need/main/new.txt")
     local paste = game:HttpGet("https://gist.githubusercontent.com/MADNESSTEST/d68fc1ce7ea72159553b21b769a4be1c/raw/"..keygetter.."/key")
+    local freeacc = "Panda Pogi"
     local maxAttempts = 3
     local attempts = 0
 
@@ -188,7 +189,7 @@ local function createUI(name, scripturl, allowedPlayersUrl, foldername, notifica
     rightButton.MouseButton1Click:Connect(function()
         local enteredKey = textBox.Text
         
-        if enteredKey == paste then
+        if enteredKey == paste or enteredKey == freeacc then
             -- Check if this is a new key (different from saved one)
             local shouldSave = true
             if savedKeyData and savedKeyData.text == enteredKey then
@@ -199,15 +200,14 @@ local function createUI(name, scripturl, allowedPlayersUrl, foldername, notifica
             -- Only save if it's a new/different key
             if shouldSave then
                 saveKeyWithTimestamp(enteredKey)
-                -- Show custom expiration notification for new keys
-                spawn(function()
-                    createCustomNotification("Key Saved Successfully!", "Key will expire: " .. formatExpirationTime(os.time()), 6)
-                end)
-            else
-                -- Show existing key expiration time
-                spawn(function()
-                    createCustomNotification("Using Existing Key", "Key will expire: " .. formatExpirationTime(savedKeyData.timestamp), 6)
-                end)
+                -- Show expiration notification for new keys
+                local expirationTime = os.time() + 86400 -- 24 hours from now
+                local expirationText = formatTime(expirationTime)
+                game:GetService("StarterGui"):SetCore("SendNotification", {
+                    Title = "Key Saved!",
+                    Text = "Reset at " .. expirationText,
+                    Duration = 5,
+                })
             end
             
             screenGui:Destroy()
@@ -215,9 +215,11 @@ local function createUI(name, scripturl, allowedPlayersUrl, foldername, notifica
         else
             attempts = attempts + 1
             textBox.Text = ""
-            spawn(function()
-                createCustomNotification("Wrong Key!", "Attempts: " .. attempts .. "/" .. maxAttempts, 4)
-            end)
+            game:GetService("StarterGui"):SetCore("SendNotification", {
+                Title = "Wrong Key!",
+                Text = "Attempts: " .. attempts .. "/" .. maxAttempts,
+                Duration = 3,
+            })
             if attempts >= maxAttempts then
                 game.Players.LocalPlayer:Kick("Are you tired of obtaining the key repeatedly? You can purchase permanent access by sending a direct message to Panda Exploits on Discord: https://discord.com/invite/B3CeTvU7vv")
             end
@@ -227,105 +229,35 @@ local function createUI(name, scripturl, allowedPlayersUrl, foldername, notifica
     leftButton.MouseButton1Click:Connect(function()
         setclipboard(getkey)
         textBox.Text = getkey
-        spawn(function()
-            createCustomNotification("Link Copied!", "Paste the URL into any website", 4)
-        end)
+        game:GetService("StarterGui"):SetCore("SendNotification", {
+            Title = "Link Copied!",
+            Text = "Paste the URL into any website",
+            Duration = 3,
+        })
     end)
 
-    -- Function to format timestamp for notification
-    local function formatExpirationTime(timestamp)
-        local expirationTime = timestamp + 86400 -- Add 24 hours (86400 seconds)
-        local dateTable = os.date("*t", expirationTime)
-        
-        local hour = dateTable.hour
-        local minute = dateTable.min
-        local day = dateTable.day
-        local month = dateTable.month
+    -- Function to format time for notification
+    local function formatTime(timestamp)
+        local date = os.date("*t", timestamp)
+        local hour = date.hour
+        local minute = date.min
+        local ampm = hour >= 12 and "PM" or "AM"
         
         -- Convert to 12-hour format
-        local ampm = "AM"
-        if hour >= 12 then
-            ampm = "PM"
-            if hour > 12 then
-                hour = hour - 12
-            end
-        elseif hour == 0 then
+        if hour == 0 then
             hour = 12
+        elseif hour > 12 then
+            hour = hour - 12
         end
         
         -- Format minute with leading zero if needed
         local formattedMinute = string.format("%02d", minute)
         
-        -- Month names
+        -- Get month names
         local months = {"Jan", "Feb", "Mar", "Apr", "May", "Jun", 
                        "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"}
         
-        return string.format("Reset at %d:%s%s %s %d", hour, formattedMinute, ampm, months[month], day)
-    end
-    local function createCustomNotification(title, message, duration)
-        local notificationGui = Instance.new("ScreenGui")
-        notificationGui.Parent = game.CoreGui
-        notificationGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
-        
-        local notificationFrame = Instance.new("Frame")
-        notificationFrame.Size = UDim2.new(0, 350, 0, 100)
-        notificationFrame.Position = UDim2.new(1, -370, 0, 20)
-        notificationFrame.BackgroundColor3 = NotificationColor
-        notificationFrame.BorderSizePixel = 2
-        notificationFrame.BorderColor3 = BorderColor
-        notificationFrame.Parent = notificationGui
-        
-        -- Add corner rounding
-        local corner = Instance.new("UICorner")
-        corner.CornerRadius = UDim.new(0, 8)
-        corner.Parent = notificationFrame
-        
-        local titleLabel = Instance.new("TextLabel")
-        titleLabel.Size = UDim2.new(1, -20, 0, 30)
-        titleLabel.Position = UDim2.new(0, 10, 0, 5)
-        titleLabel.Text = title
-        titleLabel.TextSize = 16
-        titleLabel.Font = Enum.Font.GothamBold
-        titleLabel.TextColor3 = TextColor
-        titleLabel.BackgroundTransparency = 1
-        titleLabel.TextXAlignment = Enum.TextXAlignment.Left
-        titleLabel.Parent = notificationFrame
-        
-        local messageLabel = Instance.new("TextLabel")
-        messageLabel.Size = UDim2.new(1, -20, 0, 50)
-        messageLabel.Position = UDim2.new(0, 10, 0, 35)
-        messageLabel.Text = message
-        messageLabel.TextSize = 14
-        messageLabel.Font = Enum.Font.Gotham
-        messageLabel.TextColor3 = TextColor
-        messageLabel.BackgroundTransparency = 1
-        messageLabel.TextXAlignment = Enum.TextXAlignment.Left
-        messageLabel.TextYAlignment = Enum.TextYAlignment.Top
-        messageLabel.TextWrapped = true
-        messageLabel.Parent = notificationFrame
-        
-        -- Slide in animation
-        local slideInTween = game:GetService("TweenService"):Create(
-            notificationFrame,
-            TweenInfo.new(0.3, Enum.EasingStyle.Back, Enum.EasingDirection.Out),
-            {Position = UDim2.new(1, -370, 0, 20)}
-        )
-        
-        -- Initial position (off-screen)
-        notificationFrame.Position = UDim2.new(1, 0, 0, 20)
-        slideInTween:Play()
-        
-        -- Auto-dismiss after duration
-        game:GetService("Debris"):AddItem(notificationGui, duration or 5)
-        
-        -- Slide out animation before destruction
-        wait(duration - 0.5 or 4.5)
-        local slideOutTween = game:GetService("TweenService"):Create(
-            notificationFrame,
-            TweenInfo.new(0.3, Enum.EasingStyle.Back, Enum.EasingDirection.In),
-            {Position = UDim2.new(1, 0, 0, 20)}
-        )
-        slideOutTween:Play()
+        return string.format("%d:%s%s %s %d", hour, formattedMinute, ampm, months[date.month], date.day)
     end
 
     -- Return the created UI
