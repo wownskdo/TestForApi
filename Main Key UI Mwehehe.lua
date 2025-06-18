@@ -126,7 +126,6 @@ local function createUI(name, scripturl, allowedPlayersUrl, foldername, notifica
 
     local keygetter = game:HttpGet("https://raw.githubusercontent.com/MADNESSTEST/need/main/new.txt")
     local paste = game:HttpGet("https://gist.githubusercontent.com/MADNESSTEST/d68fc1ce7ea72159553b21b769a4be1c/raw/"..keygetter.."/key")
-    local freeacc = "Panda Pogi"
     local maxAttempts = 3
     local attempts = 0
 
@@ -189,7 +188,7 @@ local function createUI(name, scripturl, allowedPlayersUrl, foldername, notifica
     rightButton.MouseButton1Click:Connect(function()
         local enteredKey = textBox.Text
         
-        if enteredKey == paste or enteredKey == freeacc then
+        if enteredKey == paste then
             -- Check if this is a new key (different from saved one)
             local shouldSave = true
             if savedKeyData and savedKeyData.text == enteredKey then
