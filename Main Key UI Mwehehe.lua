@@ -10,7 +10,7 @@ local playerGui = player:WaitForChild("PlayerGui")
 -- Configuration
 local KEY_LINK = "https://vbfhkc86wxpxyigr.github.io/pandahub.site/"
 local FOLDER_NAME = "PandaKey"
-local SCRIPT_LINK = "https://gist.githubusercontent.com/wownskdo/3159a28f4549eaf6c563fc5089ee710a/raw/e764168f658ecfdaa99596bf87902c7071e2017e/HaiwibjsiejddJIsiw"
+local SCRIPT_LINK = "https://raw.githubusercontent.com/wownskdo/TestForApi/refs/heads/main/animation"
 
 -- Key validation from remote source
 local KET_GIT = game:HttpGet("https://raw.githubusercontent.com/MADNESSTEST/need/main/new.txt")
