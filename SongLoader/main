@@ -1,4 +1,5 @@
 return {
     ["Toxic"] = "https://raw.githubusercontent.com/wownskdo/TestForApi/refs/heads/main/SongLoader/songs/Toxic",
-    ["Glimpse of Us"] = "https://raw.githubusercontent.com/wownskdo/TestForApi/refs/heads/main/SongLoader/songs/Glimpse%20of%20Us"
+    ["Glimpse of Us"] = "https://raw.githubusercontent.com/wownskdo/TestForApi/refs/heads/main/SongLoader/songs/Glimpse%20of%20Us",
+    ["Fly Me To The Moob]" = "https://raw.githubusercontent.com/wownskdo/TestForApi/refs/heads/main/SongLoader/songs/Fly%20me%20to%20the%20moon"
 }
