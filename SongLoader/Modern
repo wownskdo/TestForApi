@@ -13,6 +13,6 @@ return {
     },
     ["Rush E"] = {
         url = " https://raw.githubusercontent.com/wownskdo/TestForApi/refs/heads/main/SongLoader/songs/Modern/Rush%20E",
-        bpm = 120
+        bpm = 160
     }
 }
