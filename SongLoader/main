@@ -1,4 +1,4 @@
-{
-  "Glimosd of Us": "https://raw.githubusercontent.com/wownskdo/TestForApi/refs/heads/main/SongLoader/songs/Glimpse%20of%20Us",
-  "Toxic": "https://raw.githubusercontent.com/wownskdo/TestForApi/refs/heads/main/SongLoader/songs/Toxic"
+return {
+    ["Toxic"] = "https://raw.githubusercontent.com/wownskdo/TestForApi/refs/heads/main/SongLoader/songs/Toxic",
+    ["Glimpse of Us"] = "https://raw.githubusercontent.com/wownskdo/TestForApi/refs/heads/main/SongLoader/songs/Glimpse%20of%20Us"
 }
