@@ -1,6 +1,6 @@
 return {
     ["Fukashigi no Carte"] = {
-        url = "https://raw.githubusercontent.com/wownskdo/TestForApi/refs/heads/main/SongLoader/songs/Fukashigi%20No%20Carte",
+        url = "https://raw.githubusercontent.com/wownskdo/TestForApi/refs/heads/main/SongLoader/songs/Anime/Fukashigi%20No%20Carte",
         bpm = 158
     }
 }
