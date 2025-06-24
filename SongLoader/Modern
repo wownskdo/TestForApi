@@ -1,14 +1,14 @@
 return {
     ["Toxic"] = {
-        url = "https://raw.githubusercontent.com/wownskdo/TestForApi/main/SongLoader/songs/Toxic",
+        url = "https://raw.githubusercontent.com/wownskdo/TestForApi/refs/heads/main/SongLoader/songs/Modern/Toxic",
         bpm = 180
     },
     ["Glimpse of Us"] = {
-        url = "https://raw.githubusercontent.com/wownskdo/TestForApi/main/SongLoader/songs/Glimpse%20of%20Us",
+        url = "https://raw.githubusercontent.com/wownskdo/TestForApi/refs/heads/main/SongLoader/songs/Modern/Glimpse%20of%20Us",
         bpm = 84
     },
     ["Fly Me To The Moon"] = {
-        url = "https://raw.githubusercontent.com/wownskdo/TestForApi/main/SongLoader/songs/Fly%20me%20to%20the%20moon",
+        url = "https://raw.githubusercontent.com/wownskdo/TestForApi/refs/heads/main/SongLoader/songs/Modern/Fly%20me%20to%20the%20moon",
         bpm = 140
     }
 }
