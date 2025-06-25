@@ -1,3 +1,4 @@
+{ time = 0.000000, keys = "tempo=140" },
 { time = 0.100000, keys = "T" },
 { time = 0.497917, keys = "~T" },
 { time = 0.500000, keys = "y" },
