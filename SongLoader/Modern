@@ -18,5 +18,9 @@ return {
     ["Black Midi Rush E"] = {
        url = "https://raw.githubusercontent.com/wownskdo/TestForApi/refs/heads/main/SongLoader/songs/Modern/Black%20Midi%20Rush%20E", 
        bpm = 120
+    },
+    ["Worlds Smallest Violin"] = {
+       url = "https://raw.githubusercontent.com/wownskdo/TestForApi/refs/heads/main/SongLoader/songs/Modern/Worlds%20Smallest%20Violin",
+       bpm = 80
     }
 }
