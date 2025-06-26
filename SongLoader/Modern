@@ -3,7 +3,7 @@ return {
         url = "https://raw.githubusercontent.com/wownskdo/TestForApi/refs/heads/main/SongLoader/songs/Modern/Toxic"
     },
     ["Glimpse of Us"] = {
-        url = "https://github.com/wownskdo/TestForApi/raw/refs/heads/main/SongLoader/songs/Modern/Glimpse%20of%20us.mid"
+        url = "https://github.com/wownskdo/TestForApi/raw/refs/heads/main/SongLoader/songs/Modern/Glimpse%20of%20us"
     },
     ["Fly Me To The Moon"] = {
         url = "https://raw.githubusercontent.com/wownskdo/TestForApi/refs/heads/main/SongLoader/songs/Modern/Fly%20me%20to%20the%20moon"
