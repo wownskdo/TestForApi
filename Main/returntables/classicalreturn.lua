@@ -5,18 +5,19 @@ return {
     "Beethoven – Moonlight Sonata (3rd movement)",
     "Beethoven – Pathetique Sonata",
     "Chopin – Fantaisie-Impromptu",
-    "Chopin – Nocturne Op.9 No",
+    "Chopin – Nocturne Op.9 No.2",
     "Debussy – Clair de Lune",
     "Grieg – In the Hall of the Mountain King",
     "Handel – Sarabande",
-    "Liszt – Hungarian Rhapsody No",
+    "Liszt – Hungarian Rhapsody No. 2",
     "Mendelssohn – Wedding March",
     "Mozart – Eine kleine Nachtmusik",
     "Mozart – Turkish March",
     "Pachelbel – Canon in D",
     "Saint-Saëns – The Swan",
-    "Satie - Gymnopédie No",
+    "Satie - Gymnopédie No.1",
     "Schubert – Ave Maria",
     "Tchaikovsky – Swan Lake Theme",
-    "Vivaldi – Spring (Four Seasons)"
+    "Vivaldi – Spring (Four Seasons)",
+    "df"
 }
