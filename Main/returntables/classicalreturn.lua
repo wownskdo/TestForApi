@@ -1,4 +1,3 @@
 return {
-    "Canon_in_D",
-    "file"
+    "Canon_in_D"
 }
