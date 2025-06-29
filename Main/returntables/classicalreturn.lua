@@ -18,6 +18,5 @@ return {
     "Satie - Gymnopédie No.1",
     "Schubert – Ave Maria",
     "Tchaikovsky – Swan Lake Theme",
-    "Vivaldi – Spring (Four Seasons)",
-    "df"
+    "Vivaldi – Spring (Four Seasons)"
 }
