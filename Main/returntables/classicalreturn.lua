@@ -4,7 +4,6 @@ return {
     "Beethoven – Für Elise",
     "Beethoven – Moonlight Sonata (3rd movement)",
     "Beethoven – Pathetique Sonata",
-    "Canon_in_D",
     "Chopin – Fantaisie-Impromptu",
     "Chopin – Nocturne Op.9 No",
     "Debussy – Clair de Lune",
