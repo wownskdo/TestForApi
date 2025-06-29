@@ -1,4 +1,3 @@
 return {
-    "Fallen Down (UNDERTALE)",
-    "file"
+    "Fallen Down (UNDERTALE)"
 }
