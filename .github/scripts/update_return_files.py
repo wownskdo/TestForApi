@@ -33,8 +33,8 @@ def get_files_in_category(category_name):
     files = []
     for file_path in glob.glob(os.path.join(category_path, "*")):
         if os.path.isfile(file_path):
-            # Extract filename without extension
-            filename = os.path.splitext(os.path.basename(file_path))[0]
+            # Extract full filename with extension
+            filename = os.path.basename(file_path)
             files.append(filename)
     
     return sorted(files)  # Sort for consistent ordering
