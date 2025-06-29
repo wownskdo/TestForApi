@@ -14,6 +14,7 @@ return {
     "Mendelssohn – Wedding March",
     "Mozart – Eine kleine Nachtmusik",
     "Mozart – Turkish March",
+    "Pachelbel – Canon in D",
     "Saint-Saëns – The Swan",
     "Satie - Gymnopédie No",
     "Schubert – Ave Maria",
