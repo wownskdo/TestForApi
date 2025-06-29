@@ -1,4 +1,3 @@
 return {
-    "Unravel",
-    "file"
+    "Unravel"
 }
