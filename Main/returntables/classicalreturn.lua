@@ -1,3 +1,22 @@
 return {
-    "Canon_in_D"
+    "Bach – Prelude in C Major",
+    "Bach – Toccata and Fugue in D Minor",
+    "Beethoven – Für Elise",
+    "Beethoven – Moonlight Sonata (3rd movement)",
+    "Beethoven – Pathetique Sonata",
+    "Canon_in_D",
+    "Chopin – Fantaisie-Impromptu",
+    "Chopin – Nocturne Op.9 No",
+    "Debussy – Clair de Lune",
+    "Grieg – In the Hall of the Mountain King",
+    "Handel – Sarabande",
+    "Liszt – Hungarian Rhapsody No",
+    "Mendelssohn – Wedding March",
+    "Mozart – Eine kleine Nachtmusik",
+    "Mozart – Turkish March",
+    "Saint-Saëns – The Swan",
+    "Satie - Gymnopédie No",
+    "Schubert – Ave Maria",
+    "Tchaikovsky – Swan Lake Theme",
+    "Vivaldi – Spring (Four Seasons)"
 }
