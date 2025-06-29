@@ -1,4 +1,3 @@
 return {
-    "Glimpse of us",
-    "file"
+    "Glimpse of us"
 }
