@@ -11,7 +11,6 @@ return {
     "Labrinth – Jealous",
     "Lana Del Rey – Born to Die",
     "Ludovico Einaudi – Nuvole Bianche",
-    "Mitski – Washing Machine Heart",
     "Naruto - Sadness and Sorrow",
     "Powfu - Death Bed",
     "Ruelle – I Get To Love You",
