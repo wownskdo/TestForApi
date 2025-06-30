@@ -1,3 +1,23 @@
 return {
-    "XXXTENTACION_-_SAD_Piano_Solo"
+    "AURORA – Runaway",
+    "Adele – Someone Like You",
+    "BTS – The Truth Untold",
+    "Billie Eilish – Everything I Wanted",
+    "Birdy – Skinny Love",
+    "Christina Perri – A Thousand Years",
+    "Coldplay – Fix You",
+    "Hans Zimmer – Time",
+    "Joji – Sanctuary",
+    "Labrinth – Jealous",
+    "Lana Del Rey – Born to Die",
+    "Ludovico Einaudi – Nuvole Bianche",
+    "Mitski – Washing Machine Heart",
+    "Naruto - Sadness and Sorrow",
+    "Powfu - Death Bed",
+    "Ruelle – I Get To Love You",
+    "Troye Sivan – FOOLS",
+    "XXXTENTACION_-_SAD_Piano_Solo",
+    "Yiruma – Kiss the Rain",
+    "Yiruma – River Flows in You",
+    "Yoko Shimomura – Dearly Beloved"
 }
