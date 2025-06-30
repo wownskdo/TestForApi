@@ -4,6 +4,7 @@ return {
     "BTS – The Truth Untold",
     "Billie Eilish – Everything I Wanted",
     "Birdy – Skinny Love",
+    "Bruno Mars – When I Was Your Man",
     "Christina Perri – A Thousand Years",
     "Coldplay – Fix You",
     "Hans Zimmer – Time",
