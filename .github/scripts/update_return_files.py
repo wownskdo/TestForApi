@@ -8,7 +8,8 @@ PRESET_CATEGORIES = [
     {"name": "Anime", "returnFile": "animereturn"},
     {"name": "Emotional", "returnFile": "emotionalreturn"},
     {"name": "Game OST", "returnFile": "gameostreturn"},
-    {"name": "Others", "returnFile": "othersreturn"}
+    {"name": "Others", "returnFile": "othersreturn"},
+    {"name": "Movie", "returnFile": "moviereturn"}
 ]
 
 PRESETS_BASE_PATH = "Main/Presets"
