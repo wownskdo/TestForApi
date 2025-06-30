@@ -1,3 +1,23 @@
 return {
-    "Glimpse of us"
+    "Adele – Easy On Me",
+    "BTS – Spring Day (Piano ver)",
+    "Billie Eilish – Lovely",
+    "Bruno Mars – When I Was Your Man",
+    "Charlie Puth – See You Again",
+    "Coldplay – Viva La Vida",
+    "Ed Sheeran – Perfect",
+    "Glimpse of us",
+    "Harry Styles – Sign of the Times",
+    "Joji – Glimpse of Us",
+    "Lady Gaga – Shallow",
+    "Lana Del Rey – Young and Beautiful",
+    "Lewis Capaldi – Someone You Loved",
+    "Olivia Rodrigo – drivers license",
+    "Olivia Rodrigo – vampire",
+    "OneRepublic – Counting Stars",
+    "Sam Smith – I'm Not the Only One",
+    "Sia – Chandelier",
+    "Taylor Swift – All Too Well (10 min ver)",
+    "The Kid LAROI & Justin Bieber – Stay",
+    "Yung Kai - Blue"
 }
