@@ -16,7 +16,6 @@ return {
     "Powfu - Death Bed",
     "Ruelle – I Get To Love You",
     "Troye Sivan – FOOLS",
-    "XXXTENTACION_-_SAD_Piano_Solo",
     "Yiruma – Kiss the Rain",
     "Yiruma – River Flows in You",
     "Yoko Shimomura – Dearly Beloved"
