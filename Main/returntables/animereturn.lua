@@ -17,7 +17,6 @@ return {
     "Spirited Away – Always With Me",
     "Sword Art Online – Crossing Field",
     "Tokyo Ghoul – Unravel",
-    "Unravel",
     "Violet Evergarden – Sincerely",
     "Your Lie in April – Again"
 }
