@@ -6,7 +6,6 @@ return {
     "Charlie Puth – See You Again",
     "Coldplay – Viva La Vida",
     "Ed Sheeran – Perfect",
-    "Glimpse of us",
     "Harry Styles – Sign of the Times",
     "Joji – Glimpse of Us",
     "Lady Gaga – Shallow",
