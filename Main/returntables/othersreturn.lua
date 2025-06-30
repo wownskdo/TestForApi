@@ -7,7 +7,6 @@ return {
     "Fireflies – Owl City",
     "Internet Meme – Oh No Sound Effect",
     "Linga Guli Guli",
-    "Linga_Guli_Guli__Zachz_Winner_H85",
     "Nyan Cat Theme",
     "Rick Astley – Never Gonna Give You Up",
     "Running in the 90s",
