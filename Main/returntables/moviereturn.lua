@@ -1,4 +1,3 @@
 return {
-    "StevesLavaChicken_41W",
-    "test"
+    "StevesLavaChicken_41W"
 }
