@@ -2,7 +2,6 @@ return {
     "Adele – Easy On Me",
     "BTS – Spring Day (Piano ver)",
     "Billie Eilish – Lovely",
-    "Bruno Mars – When I Was Your Man",
     "Charlie Puth – See You Again",
     "Coldplay – Viva La Vida",
     "Ed Sheeran – Perfect",
