@@ -18,5 +18,6 @@ return {
     "Sword Art Online – Crossing Field",
     "Tokyo Ghoul – Unravel",
     "Violet Evergarden – Sincerely",
-    "Your Lie in April – Again"
+    "Your Lie in April – Again",
+    "fuff"
 }
