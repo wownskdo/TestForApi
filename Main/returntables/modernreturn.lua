@@ -11,6 +11,7 @@ return {
     "Lady Gaga – Shallow",
     "Lana Del Rey – Young and Beautiful",
     "Lewis Capaldi – Someone You Loved",
+    "Mitski – Washing Machine Heart",
     "Olivia Rodrigo – drivers license",
     "Olivia Rodrigo – vampire",
     "OneRepublic – Counting Stars",
