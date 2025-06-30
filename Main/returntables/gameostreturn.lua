@@ -4,7 +4,6 @@ return {
     "Cuphead – Floral Fury",
     "Deltarune – Field of Hopes and Dreams",
     "FNAF – It's Been So Long",
-    "Fallen Down (UNDERTALE)",
     "Final Fantasy – To Zanarkand",
     "Genshin Impact – Rex Incognito",
     "Hollow Knight – City of Tears",
