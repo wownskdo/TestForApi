@@ -14,6 +14,7 @@ return {
     "Naruto – Blue Bird",
     "One Piece – We Are!",
     "One Punch Man – The Hero!!",
+    "Solo Leveling S2 - REVIVER",
     "Spirited Away – Always With Me",
     "Sword Art Online – Crossing Field",
     "Tokyo Ghoul – Unravel",
