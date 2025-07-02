@@ -12,6 +12,7 @@ return {
     "Harry Styles – Sign of the Times",
     "Hozier – Too Sweet",
     "JVKE – golden hour",
+    "Jamie Duffy - Solas",
     "Joji – Glimpse of Us",
     "Lady Gaga – Shallow",
     "Lana Del Rey – Young and Beautiful",
