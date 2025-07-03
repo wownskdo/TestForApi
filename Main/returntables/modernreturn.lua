@@ -4,6 +4,7 @@ return {
     "Benson Boone – Beautiful Things",
     "Billie Eilish – Birds of a Feather",
     "Billie Eilish – Lovely",
+    "BoyWithUke - Toxic",
     "Chappell Roan – Good Luck, Babe!",
     "Charlie Puth – See You Again",
     "Coldplay – Viva La Vida",
