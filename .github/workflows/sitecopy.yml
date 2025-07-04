@@ -1,170 +1,117 @@
-name: Copy Files to ForSite (Simple Conversion)
+name: Copy and Modify Repository Structure
 
 on:
   push:
     branches: [ main ]
-    paths:
-      - 'Main/Presets/**'
-      - 'Main/returntables/**'
   pull_request:
     branches: [ main ]
-    paths:
-      - 'Main/Presets/**'
-      - 'Main/returntables/**'
-  workflow_dispatch:
+  workflow_dispatch:  # Allows manual triggering
 
 jobs:
-  copy-files:
+  copy-and-modify:
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
-      actions: read
     
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
       with:
-        fetch-depth: 0
-        token: ${{ secrets.GITHUB_TOKEN }}
-
-    - name: Setup Git
+        fetch-depth: 0  # Fetch all history for all branches and tags
+        
+    - name: Set up Git
       run: |
-        git config --local user.email "action@github.com"
-        git config --local user.name "GitHub Action"
-
+        git config --global user.name "github-actions[bot]"
+        git config --global user.email "github-actions[bot]@users.noreply.github.com"
+        
     - name: Create ForSite directory structure
       run: |
-        mkdir -p ForSite/Presets
-        mkdir -p ForSite/returntables
-
-    - name: Copy Presets folder
-      run: |
+        # Create the ForSite directory if it doesn't exist
+        mkdir -p ForSite
+        
+        # Copy Main/Presets folder to ForSite/Presets
         if [ -d "Main/Presets" ]; then
-          cp -r Main/Presets/* ForSite/Presets/
-          echo "✅ Copied Presets folder"
+          cp -r Main/Presets ForSite/
+          echo "✅ Copied Main/Presets to ForSite/Presets"
         else
-          echo "⚠️ Main/Presets folder not found"
+          echo "❌ Main/Presets directory not found"
         fi
-
-    - name: Convert Lua return tables to JSON
-      run: |
+        
+        # Copy Main/returntables folder to ForSite/returntables
         if [ -d "Main/returntables" ]; then
-          # Create Node.js conversion script
-          cat > convert_lua_to_json.js << 'NODEEOF'
-          const fs = require('fs');
-          const path = require('path');
-          
-          function convertLuaToJson(luaFile, jsonFile) {
-              try {
-                  const luaContent = fs.readFileSync(luaFile, 'utf8');
-                  
-                  // Simple regex-based conversion for basic Lua return tables
-                  // This handles arrays like: return {"item1", "item2", "item3"}
-                  const returnMatch = luaContent.match(/return\s*({[\s\S]*})/);
-                  if (!returnMatch) {
-                      console.log(`❌ No return statement found in ${luaFile}`);
-                      return false;
-                  }
-                  
-                  let luaTable = returnMatch[1];
-                  
-                  // Convert Lua table syntax to JSON
-                  let jsonContent = luaTable
-                      .replace(/\{/g, '[')           // { to [
-                      .replace(/\}/g, ']')           // } to ]
-                      .replace(/,\s*\]/g, ']')       // Remove trailing commas
-                      .replace(/,\s*$/g, '')         // Remove final comma
-                      .replace(/"/g, '"')            // Normalize quotes
-                      .replace(/'/g, '"');           // Single quotes to double quotes
-                  
-                  // Parse and re-stringify to ensure valid JSON
-                  const parsed = JSON.parse(jsonContent);
-                  const formattedJson = JSON.stringify(parsed, null, 2);
-                  
-                  fs.writeFileSync(jsonFile, formattedJson);
-                  console.log(`✅ Converted: ${luaFile} → ${jsonFile}`);
-                  return true;
-              } catch (error) {
-                  console.log(`❌ Error converting ${luaFile}: ${error.message}`);
-                  return false;
-              }
-          }
-          
-          // Process command line arguments
-          const inputFile = process.argv[2];
-          const outputFile = process.argv[3];
-          
-          if (inputFile && outputFile) {
-              convertLuaToJson(inputFile, outputFile);
-          } else {
-              console.log('Usage: node convert_lua_to_json.js <input.lua> <output.json>');
-          }
-        NODEEOF
-          
-          # Convert each .lua file to .json
-          for lua_file in Main/returntables/*.lua; do
-              if [ -f "$lua_file" ]; then
-                  filename=$(basename "$lua_file" .lua)
-                  json_file="ForSite/returntables/${filename}.json"
-                  
-                  echo "Converting: $lua_file → $json_file"
-                  node convert_lua_to_json.js "$lua_file" "$json_file"
-              fi
+          cp -r Main/returntables ForSite/
+          echo "✅ Copied Main/returntables to ForSite/returntables"
+        else
+          echo "❌ Main/returntables directory not found"
+        fi
+        
+    - name: Modify return files content
+      run: |
+        # Find all .lua files in ForSite/returntables and modify their content
+        if [ -d "ForSite/returntables" ]; then
+          find ForSite/returntables -name "*.lua" -type f | while read file; do
+            echo "🔄 Processing: $file"
+            # Replace 'return {}' with 'return []' in each file
+            sed -i 's/return {}/return []/g' "$file"
+            # Also handle cases with spaces or different formatting
+            sed -i 's/return{ }/return []/g' "$file"
+            sed -i 's/return { }/return []/g' "$file"
+            sed -i 's/return{}/return []/g' "$file"
+            echo "✅ Modified: $file"
           done
+          echo "🎉 All return files have been modified"
+        else
+          echo "❌ ForSite/returntables directory not found"
+        fi
+        
+    - name: Verify changes
+      run: |
+        echo "📋 ForSite directory structure:"
+        ls -la ForSite/
+        
+        if [ -d "ForSite/Presets" ]; then
+          echo "📋 ForSite/Presets contents:"
+          ls -la ForSite/Presets/
+        fi
+        
+        if [ -d "ForSite/returntables" ]; then
+          echo "📋 ForSite/returntables contents:"
+          ls -la ForSite/returntables/
           
-          echo "✅ Converted returntables folder to JSON format"
-        else
-          echo "⚠️ Main/returntables folder not found"
+          echo "📋 Sample of modified return files:"
+          find ForSite/returntables -name "*.lua" -type f | head -3 | while read file; do
+            echo "--- Content of $file ---"
+            cat "$file"
+            echo "--- End of $file ---"
+          done
         fi
-
-    - name: Check for changes
-      id: check-changes
-      run: |
-        if [ -n "$(git status --porcelain)" ]; then
-          echo "changes=true" >> $GITHUB_OUTPUT
-          echo "📋 Changes detected:"
-          git status --short
-        else
-          echo "changes=false" >> $GITHUB_OUTPUT
-          echo "📋 No changes detected"
-        fi
-
+        
     - name: Commit and push changes
-      if: steps.check-changes.outputs.changes == 'true'
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
+        # Add all changes
         git add ForSite/
-        git commit -m "🔄 Auto-sync: Copy Presets and convert returntables to JSON
         
-        - Copied Main/Presets/ → ForSite/Presets/
-        - Converted Main/returntables/ → ForSite/returntables/ (Lua to JSON)
-        - Triggered by: ${{ github.event_name }}
-        - Commit: ${{ github.sha }}"
+        # Check if there are changes to commit
+        if git diff --staged --quiet; then
+          echo "No changes to commit"
+        else
+          # Commit changes
+          git commit -m "Auto-update: Copy and modify repository structure to ForSite directory
+          
+          - Copied Main/Presets to ForSite/Presets
+          - Copied Main/returntables to ForSite/returntables  
+          - Modified return files to use [] instead of {}"
+          
+          # Push changes
+          git push origin main
+          echo "✅ Changes committed and pushed successfully"
+        fi
         
-        git push origin HEAD:${{ github.ref_name }}
-
-    - name: Summary
+    - name: Create summary
       run: |
-        echo "## 📊 Copy Operation Summary" >> $GITHUB_STEP_SUMMARY
-        echo "| Source | Destination | Status |" >> $GITHUB_STEP_SUMMARY
-        echo "|--------|-------------|--------|" >> $GITHUB_STEP_SUMMARY
-        
-        if [ -d "Main/Presets" ]; then
-          PRESET_COUNT=$(find Main/Presets -type f | wc -l)
-          echo "| Main/Presets/ | ForSite/Presets/ | ✅ Copied ($PRESET_COUNT files) |" >> $GITHUB_STEP_SUMMARY
-        else
-          echo "| Main/Presets/ | ForSite/Presets/ | ⚠️ Source not found |" >> $GITHUB_STEP_SUMMARY
-        fi
-        
-        if [ -d "Main/returntables" ]; then
-          RETURN_COUNT=$(find Main/returntables -name "*.lua" | wc -l)
-          JSON_COUNT=$(find ForSite/returntables -name "*.json" 2>/dev/null | wc -l)
-          echo "| Main/returntables/ | ForSite/returntables/ | ✅ Converted ($RETURN_COUNT Lua → $JSON_COUNT JSON) |" >> $GITHUB_STEP_SUMMARY
-        else
-          echo "| Main/returntables/ | ForSite/returntables/ | ⚠️ Source not found |" >> $GITHUB_STEP_SUMMARY
-        fi
-        
-        echo "" >> $GITHUB_STEP_SUMMARY
-        echo "**Trigger:** ${{ github.event_name }}" >> $GITHUB_STEP_SUMMARY
-        echo "**Commit:** ${{ github.sha }}" >> $GITHUB_STEP_SUMMARY
+        echo "🎯 Workflow Summary:"
+        echo "==================="
+        echo "✅ Repository structure copied to ForSite/"
+        echo "✅ Return files modified from 'return {}' to 'return []'"
+        echo "✅ All changes committed and pushed"
+        echo ""
+        echo "📁 Final ForSite structure:"
+        tree ForSite/ || ls -R ForSite/
