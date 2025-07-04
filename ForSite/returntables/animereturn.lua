@@ -1,0 +1,23 @@
+return {
+    "Angel Beats – My Soul, Your Beats!",
+    "Attack on Titan – Guren no Yumiya",
+    "Chainsaw Man – Kick Back",
+    "Clannad – Dango Daikazoku",
+    "Death Note – L's Theme",
+    "Demon Slayer – Gurenge",
+    "Evangelion – Cruel Angel's Thesis",
+    "Fullmetal Alchemist Brotherhood – Again",
+    "Haikyuu!! – Imagination",
+    "Jujutsu Kaisen – Kaikai Kitan",
+    "K-On! – Don't Say Lazy",
+    "Kimi no Na wa – Sparkle",
+    "Naruto – Blue Bird",
+    "One Piece – We Are!",
+    "One Punch Man – The Hero!!",
+    "Solo Leveling S2 - REVIVER",
+    "Spirited Away – Always With Me",
+    "Sword Art Online – Crossing Field",
+    "Tokyo Ghoul – Unravel",
+    "Violet Evergarden – Sincerely",
+    "Your Lie in April – Again"
+}

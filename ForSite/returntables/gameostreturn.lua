@@ -1,0 +1,22 @@
+return {
+    "Celeste – Resurrections",
+    "Chrono Trigger – Corridors of Time",
+    "Cuphead – Floral Fury",
+    "Deltarune – Field of Hopes and Dreams",
+    "FNAF – It's Been So Long",
+    "Final Fantasy – To Zanarkand",
+    "Genshin Impact – Rex Incognito",
+    "Hollow Knight – City of Tears",
+    "League of Legends – Legends Never Die",
+    "Minecraft – Sweden",
+    "NieR Automata – Weight of the World",
+    "Omori – My Time",
+    "Persona 5 – Beneath the Mask",
+    "Portal – Still Alive",
+    "Sonic – Green Hill Zone",
+    "Stardew Valley – Spring (It's a Big World Outside)",
+    "Super Mario Galaxy – Gusty Garden",
+    "Undertale – His Theme",
+    "Undertale – Megalovania",
+    "Zelda – Song of Storms"
+}
