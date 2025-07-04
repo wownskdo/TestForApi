@@ -49,12 +49,22 @@ jobs:
         if [ -d "ForSite/returntables" ]; then
           find ForSite/returntables -name "*.lua" -type f | while read file; do
             echo "🔄 Processing: $file"
-            # Replace 'return {}' with 'return []' in each file
-            sed -i 's/return {}/return []/g' "$file"
-            # Also handle cases with spaces or different formatting
-            sed -i 's/return{ }/return []/g' "$file"
-            sed -i 's/return { }/return []/g' "$file"
-            sed -i 's/return{}/return []/g' "$file"
+            echo "--- Original content ---"
+            cat "$file"
+            echo "--- End original ---"
+            
+            # Use sed to replace the opening brace after 'return' with [
+            sed -i 's/return\s*{/return [/' "$file"
+            
+            # Use sed to replace the closing brace at the end with ]
+            sed -i 's/}$/]/' "$file"
+            
+            # Handle cases where there might be whitespace after the closing brace
+            sed -i 's/}\s*$/]/' "$file"
+            
+            echo "--- Modified content ---"
+            cat "$file"
+            echo "--- End modified ---"
             echo "✅ Modified: $file"
           done
           echo "🎉 All return files have been modified"
