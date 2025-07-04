@@ -1,4 +1,4 @@
-name: Copy Files to ForSite
+name: Copy Files to ForSite (Simple Conversion)
 
 on:
   push:
@@ -46,86 +46,60 @@ jobs:
           echo "⚠️ Main/Presets folder not found"
         fi
 
-    - name: Install Lua and JSON converter
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y lua5.3 jq
-
-    - name: Convert and copy returntables folder
+    - name: Convert Lua return tables to JSON
       run: |
         if [ -d "Main/returntables" ]; then
-          # Create conversion script
-          cat > convert_lua_to_json.lua << 'EOF'
-          local function lua_to_json_value(val)
-              if type(val) == "string" then
-                  return '"' .. val:gsub('"', '\\"') .. '"'
-              elseif type(val) == "number" then
-                  return tostring(val)
-              elseif type(val) == "boolean" then
-                  return val and "true" or "false"
-              elseif type(val) == "table" then
-                  local result = {}
-                  local is_array = true
-                  local max_index = 0
+          # Create Node.js conversion script
+          cat > convert_lua_to_json.js << 'NODEEOF'
+          const fs = require('fs');
+          const path = require('path');
+          
+          function convertLuaToJson(luaFile, jsonFile) {
+              try {
+                  const luaContent = fs.readFileSync(luaFile, 'utf8');
                   
-                  -- Check if it's an array
-                  for k, v in pairs(val) do
-                      if type(k) ~= "number" then
-                          is_array = false
-                          break
-                      end
-                      max_index = math.max(max_index, k)
-                  end
+                  // Simple regex-based conversion for basic Lua return tables
+                  // This handles arrays like: return {"item1", "item2", "item3"}
+                  const returnMatch = luaContent.match(/return\s*({[\s\S]*})/);
+                  if (!returnMatch) {
+                      console.log(`❌ No return statement found in ${luaFile}`);
+                      return false;
+                  }
                   
-                  if is_array then
-                      -- Array format
-                      for i = 1, max_index do
-                          table.insert(result, lua_to_json_value(val[i]))
-                      end
-                      return "[" .. table.concat(result, ",") .. "]"
-                  else
-                      -- Object format
-                      for k, v in pairs(val) do
-                          local key = type(k) == "string" and '"' .. k .. '"' or tostring(k)
-                          table.insert(result, key .. ":" .. lua_to_json_value(v))
-                      end
-                      return "{" .. table.concat(result, ",") .. "}"
-                  end
-              else
-                  return "null"
-              end
-          end
+                  let luaTable = returnMatch[1];
+                  
+                  // Convert Lua table syntax to JSON
+                  let jsonContent = luaTable
+                      .replace(/\{/g, '[')           // { to [
+                      .replace(/\}/g, ']')           // } to ]
+                      .replace(/,\s*\]/g, ']')       // Remove trailing commas
+                      .replace(/,\s*$/g, '')         // Remove final comma
+                      .replace(/"/g, '"')            // Normalize quotes
+                      .replace(/'/g, '"');           // Single quotes to double quotes
+                  
+                  // Parse and re-stringify to ensure valid JSON
+                  const parsed = JSON.parse(jsonContent);
+                  const formattedJson = JSON.stringify(parsed, null, 2);
+                  
+                  fs.writeFileSync(jsonFile, formattedJson);
+                  console.log(`✅ Converted: ${luaFile} → ${jsonFile}`);
+                  return true;
+              } catch (error) {
+                  console.log(`❌ Error converting ${luaFile}: ${error.message}`);
+                  return false;
+              }
+          }
           
-          local function convert_file(input_file, output_file)
-              local chunk, err = loadfile(input_file)
-              if not chunk then
-                  print("Error loading file: " .. err)
-                  return false
-              end
-              
-              local result = chunk()
-              if result then
-                  local json_str = lua_to_json_value(result)
-                  local file = io.open(output_file, "w")
-                  if file then
-                      file:write(json_str)
-                      file:close()
-                      return true
-                  end
-              end
-              return false
-          end
+          // Process command line arguments
+          const inputFile = process.argv[2];
+          const outputFile = process.argv[3];
           
-          -- Get command line arguments
-          local input_file = arg[1]
-          local output_file = arg[2]
-          
-          if convert_file(input_file, output_file) then
-              print("✅ Converted: " .. input_file .. " → " .. output_file)
-          else
-              print("❌ Failed to convert: " .. input_file)
-          end
-          EOF
+          if (inputFile && outputFile) {
+              convertLuaToJson(inputFile, outputFile);
+          } else {
+              console.log('Usage: node convert_lua_to_json.js <input.lua> <output.json>');
+          }
+        NODEEOF
           
           # Convert each .lua file to .json
           for lua_file in Main/returntables/*.lua; do
@@ -134,25 +108,13 @@ jobs:
                   json_file="ForSite/returntables/${filename}.json"
                   
                   echo "Converting: $lua_file → $json_file"
-                  lua5.3 convert_lua_to_json.lua "$lua_file" "$json_file"
-                  
-                  # Format JSON with jq if conversion was successful
-                  if [ -f "$json_file" ]; then
-                      jq '.' "$json_file" > "${json_file}.tmp" && mv "${json_file}.tmp" "$json_file"
-                  fi
+                  node convert_lua_to_json.js "$lua_file" "$json_file"
               fi
           done
           
-          echo "✅ Converted and copied returntables folder to JSON format"
+          echo "✅ Converted returntables folder to JSON format"
         else
           echo "⚠️ Main/returntables folder not found"
-        fi
-
-    - name: Copy any existing ForSite content
-      run: |
-        # Preserve any existing files in ForSite that aren't Presets or returntables
-        if [ -d "ForSite" ]; then
-          find ForSite -type f ! -path "ForSite/Presets/*" ! -path "ForSite/returntables/*" -exec echo "Preserving: {}" \;
         fi
 
     - name: Check for changes
@@ -197,7 +159,7 @@ jobs:
         
         if [ -d "Main/returntables" ]; then
           RETURN_COUNT=$(find Main/returntables -name "*.lua" | wc -l)
-          JSON_COUNT=$(find ForSite/returntables -name "*.json" | wc -l)
+          JSON_COUNT=$(find ForSite/returntables -name "*.json" 2>/dev/null | wc -l)
           echo "| Main/returntables/ | ForSite/returntables/ | ✅ Converted ($RETURN_COUNT Lua → $JSON_COUNT JSON) |" >> $GITHUB_STEP_SUMMARY
         else
           echo "| Main/returntables/ | ForSite/returntables/ | ⚠️ Source not found |" >> $GITHUB_STEP_SUMMARY
