@@ -1,0 +1,22 @@
+return {
+    "All Star – Smash Mouth",
+    "Among Us Drip Theme",
+    "Coffin Dance – Astronomia",
+    "Crab Rave",
+    "Darude – Sandstorm",
+    "Fireflies – Owl City",
+    "Internet Meme – Oh No Sound Effect",
+    "Linga Guli Guli",
+    "Nyan Cat Theme",
+    "Rick Astley – Never Gonna Give You Up",
+    "Running in the 90s",
+    "Rush E",
+    "Shrek Theme – Hallelujah",
+    "Spooky Scary Skeletons",
+    "Steven Universe Theme Lo-fi",
+    "TheFatRat – Monody",
+    "TheFatRat – Unity",
+    "TheFatRat – Xenogenesis",
+    "Thomas the Tank Engine",
+    "Tokyo Drift"
+}
