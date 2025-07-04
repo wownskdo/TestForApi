@@ -1,0 +1,108 @@
+name: Copy Files to ForSite
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'Main/Presets/**'
+      - 'Main/returntables/**'
+  pull_request:
+    branches: [ main ]
+    paths:
+      - 'Main/Presets/**'
+      - 'Main/returntables/**'
+  workflow_dispatch:
+
+jobs:
+  copy-files:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    - name: Setup Git
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+
+    - name: Create ForSite directory structure
+      run: |
+        mkdir -p ForSite/Presets
+        mkdir -p ForSite/returntables
+
+    - name: Copy Presets folder
+      run: |
+        if [ -d "Main/Presets" ]; then
+          cp -r Main/Presets/* ForSite/Presets/
+          echo "✅ Copied Presets folder"
+        else
+          echo "⚠️ Main/Presets folder not found"
+        fi
+
+    - name: Copy returntables folder
+      run: |
+        if [ -d "Main/returntables" ]; then
+          cp -r Main/returntables/* ForSite/returntables/
+          echo "✅ Copied returntables folder"
+        else
+          echo "⚠️ Main/returntables folder not found"
+        fi
+
+    - name: Copy any existing ForSite content
+      run: |
+        # Preserve any existing files in ForSite that aren't Presets or returntables
+        if [ -d "ForSite" ]; then
+          find ForSite -type f ! -path "ForSite/Presets/*" ! -path "ForSite/returntables/*" -exec echo "Preserving: {}" \;
+        fi
+
+    - name: Check for changes
+      id: check-changes
+      run: |
+        if [ -n "$(git status --porcelain)" ]; then
+          echo "changes=true" >> $GITHUB_OUTPUT
+          echo "📋 Changes detected:"
+          git status --short
+        else
+          echo "changes=false" >> $GITHUB_OUTPUT
+          echo "📋 No changes detected"
+        fi
+
+    - name: Commit and push changes
+      if: steps.check-changes.outputs.changes == 'true'
+      run: |
+        git add ForSite/
+        git commit -m "🔄 Auto-sync: Copy Presets and returntables to ForSite
+        
+        - Copied Main/Presets/ → ForSite/Presets/
+        - Copied Main/returntables/ → ForSite/returntables/
+        - Triggered by: ${{ github.event_name }}
+        - Commit: ${{ github.sha }}"
+        
+        git push
+
+    - name: Summary
+      run: |
+        echo "## 📊 Copy Operation Summary" >> $GITHUB_STEP_SUMMARY
+        echo "| Source | Destination | Status |" >> $GITHUB_STEP_SUMMARY
+        echo "|--------|-------------|--------|" >> $GITHUB_STEP_SUMMARY
+        
+        if [ -d "Main/Presets" ]; then
+          PRESET_COUNT=$(find Main/Presets -type f | wc -l)
+          echo "| Main/Presets/ | ForSite/Presets/ | ✅ Copied ($PRESET_COUNT files) |" >> $GITHUB_STEP_SUMMARY
+        else
+          echo "| Main/Presets/ | ForSite/Presets/ | ⚠️ Source not found |" >> $GITHUB_STEP_SUMMARY
+        fi
+        
+        if [ -d "Main/returntables" ]; then
+          RETURN_COUNT=$(find Main/returntables -type f | wc -l)
+          echo "| Main/returntables/ | ForSite/returntables/ | ✅ Copied ($RETURN_COUNT files) |" >> $GITHUB_STEP_SUMMARY
+        else
+          echo "| Main/returntables/ | ForSite/returntables/ | ⚠️ Source not found |" >> $GITHUB_STEP_SUMMARY
+        fi
+        
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "**Trigger:** ${{ github.event_name }}" >> $GITHUB_STEP_SUMMARY
+        echo "**Commit:** ${{ github.sha }}" >> $GITHUB_STEP_SUMMARY
