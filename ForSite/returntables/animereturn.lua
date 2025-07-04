@@ -1,4 +1,4 @@
-return {
+return [
     "Angel Beats – My Soul, Your Beats!",
     "Attack on Titan – Guren no Yumiya",
     "Chainsaw Man – Kick Back",
@@ -20,4 +20,4 @@ return {
     "Tokyo Ghoul – Unravel",
     "Violet Evergarden – Sincerely",
     "Your Lie in April – Again"
-}
+]

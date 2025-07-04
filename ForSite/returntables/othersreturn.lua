@@ -1,4 +1,4 @@
-return {
+return [
     "All Star – Smash Mouth",
     "Among Us Drip Theme",
     "Coffin Dance – Astronomia",
@@ -19,4 +19,4 @@ return {
     "TheFatRat – Xenogenesis",
     "Thomas the Tank Engine",
     "Tokyo Drift"
-}
+]

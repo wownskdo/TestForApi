@@ -1,4 +1,4 @@
-return {
+return [
     "Alexis Ffrench – Bluebird",
     "Bach – Prelude in C Major",
     "Bach – Toccata and Fugue in D Minor",
@@ -29,4 +29,4 @@ return {
     "Tchaikovsky – Swan Lake Theme",
     "Vivaldi – Spring (Four Seasons)",
     "Yiruma – Indigo"
-}
+]

@@ -1,4 +1,4 @@
-return {
+return [
     "Adele – Easy On Me",
     "BTS – Spring Day (Piano ver)",
     "Benson Boone – Beautiful Things",
@@ -32,4 +32,4 @@ return {
     "The Kid LAROI & Justin Bieber – Stay",
     "The Living Tombstone - My Ordinary Life",
     "Yung Kai - Blue"
-}
+]

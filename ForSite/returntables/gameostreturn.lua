@@ -1,4 +1,4 @@
-return {
+return [
     "Celeste – Resurrections",
     "Chrono Trigger – Corridors of Time",
     "Cuphead – Floral Fury",
@@ -19,4 +19,4 @@ return {
     "Undertale – His Theme",
     "Undertale – Megalovania",
     "Zelda – Song of Storms"
-}
+]
