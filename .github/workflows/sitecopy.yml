@@ -16,12 +16,16 @@ on:
 jobs:
   copy-files:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      actions: read
     
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
       with:
         fetch-depth: 0
+        token: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Setup Git
       run: |
@@ -42,11 +46,104 @@ jobs:
           echo "⚠️ Main/Presets folder not found"
         fi
 
-    - name: Copy returntables folder
+    - name: Install Lua and JSON converter
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y lua5.3 jq
+
+    - name: Convert and copy returntables folder
       run: |
         if [ -d "Main/returntables" ]; then
-          cp -r Main/returntables/* ForSite/returntables/
-          echo "✅ Copied returntables folder"
+          # Create conversion script
+          cat > convert_lua_to_json.lua << 'EOF'
+          local function lua_to_json_value(val)
+              if type(val) == "string" then
+                  return '"' .. val:gsub('"', '\\"') .. '"'
+              elseif type(val) == "number" then
+                  return tostring(val)
+              elseif type(val) == "boolean" then
+                  return val and "true" or "false"
+              elseif type(val) == "table" then
+                  local result = {}
+                  local is_array = true
+                  local max_index = 0
+                  
+                  -- Check if it's an array
+                  for k, v in pairs(val) do
+                      if type(k) ~= "number" then
+                          is_array = false
+                          break
+                      end
+                      max_index = math.max(max_index, k)
+                  end
+                  
+                  if is_array then
+                      -- Array format
+                      for i = 1, max_index do
+                          table.insert(result, lua_to_json_value(val[i]))
+                      end
+                      return "[" .. table.concat(result, ",") .. "]"
+                  else
+                      -- Object format
+                      for k, v in pairs(val) do
+                          local key = type(k) == "string" and '"' .. k .. '"' or tostring(k)
+                          table.insert(result, key .. ":" .. lua_to_json_value(v))
+                      end
+                      return "{" .. table.concat(result, ",") .. "}"
+                  end
+              else
+                  return "null"
+              end
+          end
+          
+          local function convert_file(input_file, output_file)
+              local chunk, err = loadfile(input_file)
+              if not chunk then
+                  print("Error loading file: " .. err)
+                  return false
+              end
+              
+              local result = chunk()
+              if result then
+                  local json_str = lua_to_json_value(result)
+                  local file = io.open(output_file, "w")
+                  if file then
+                      file:write(json_str)
+                      file:close()
+                      return true
+                  end
+              end
+              return false
+          end
+          
+          -- Get command line arguments
+          local input_file = arg[1]
+          local output_file = arg[2]
+          
+          if convert_file(input_file, output_file) then
+              print("✅ Converted: " .. input_file .. " → " .. output_file)
+          else
+              print("❌ Failed to convert: " .. input_file)
+          end
+          EOF
+          
+          # Convert each .lua file to .json
+          for lua_file in Main/returntables/*.lua; do
+              if [ -f "$lua_file" ]; then
+                  filename=$(basename "$lua_file" .lua)
+                  json_file="ForSite/returntables/${filename}.json"
+                  
+                  echo "Converting: $lua_file → $json_file"
+                  lua5.3 convert_lua_to_json.lua "$lua_file" "$json_file"
+                  
+                  # Format JSON with jq if conversion was successful
+                  if [ -f "$json_file" ]; then
+                      jq '.' "$json_file" > "${json_file}.tmp" && mv "${json_file}.tmp" "$json_file"
+                  fi
+              fi
+          done
+          
+          echo "✅ Converted and copied returntables folder to JSON format"
         else
           echo "⚠️ Main/returntables folder not found"
         fi
@@ -72,16 +169,18 @@ jobs:
 
     - name: Commit and push changes
       if: steps.check-changes.outputs.changes == 'true'
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
         git add ForSite/
-        git commit -m "🔄 Auto-sync: Copy Presets and returntables to ForSite
+        git commit -m "🔄 Auto-sync: Copy Presets and convert returntables to JSON
         
         - Copied Main/Presets/ → ForSite/Presets/
-        - Copied Main/returntables/ → ForSite/returntables/
+        - Converted Main/returntables/ → ForSite/returntables/ (Lua to JSON)
         - Triggered by: ${{ github.event_name }}
         - Commit: ${{ github.sha }}"
         
-        git push
+        git push origin HEAD:${{ github.ref_name }}
 
     - name: Summary
       run: |
@@ -97,8 +196,9 @@ jobs:
         fi
         
         if [ -d "Main/returntables" ]; then
-          RETURN_COUNT=$(find Main/returntables -type f | wc -l)
-          echo "| Main/returntables/ | ForSite/returntables/ | ✅ Copied ($RETURN_COUNT files) |" >> $GITHUB_STEP_SUMMARY
+          RETURN_COUNT=$(find Main/returntables -name "*.lua" | wc -l)
+          JSON_COUNT=$(find ForSite/returntables -name "*.json" | wc -l)
+          echo "| Main/returntables/ | ForSite/returntables/ | ✅ Converted ($RETURN_COUNT Lua → $JSON_COUNT JSON) |" >> $GITHUB_STEP_SUMMARY
         else
           echo "| Main/returntables/ | ForSite/returntables/ | ⚠️ Source not found |" >> $GITHUB_STEP_SUMMARY
         fi
