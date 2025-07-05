@@ -1,0 +1,127 @@
+name: Copy and Modify Repository Structure
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:  # Allows manual triggering
+
+jobs:
+  copy-and-modify:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0  # Fetch all history for all branches and tags
+        
+    - name: Set up Git
+      run: |
+        git config --global user.name "github-actions[bot]"
+        git config --global user.email "github-actions[bot]@users.noreply.github.com"
+        
+    - name: Create ForSite directory structure
+      run: |
+        # Create the ForSite directory if it doesn't exist
+        mkdir -p ForSite
+        
+        # Copy Main/Presets folder to ForSite/Presets
+        if [ -d "Main/Presets" ]; then
+          cp -r Main/Presets ForSite/
+          echo "✅ Copied Main/Presets to ForSite/Presets"
+        else
+          echo "❌ Main/Presets directory not found"
+        fi
+        
+        # Copy Main/returntables folder to ForSite/returntables
+        if [ -d "Main/returntables" ]; then
+          cp -r Main/returntables ForSite/
+          echo "✅ Copied Main/returntables to ForSite/returntables"
+        else
+          echo "❌ Main/returntables directory not found"
+        fi
+        
+    - name: Modify return files content
+      run: |
+        # Find all .lua files in ForSite/returntables and modify their content
+        if [ -d "ForSite/returntables" ]; then
+          find ForSite/returntables -name "*.lua" -type f | while read file; do
+            echo "🔄 Processing: $file"
+            echo "--- Original content ---"
+            cat "$file"
+            echo "--- End original ---"
+            
+            # Use sed to replace the opening brace after 'return' with [
+            sed -i 's/return\s*{/return [/' "$file"
+            
+            # Use sed to replace the closing brace at the end with ]
+            sed -i 's/}$/]/' "$file"
+            
+            # Handle cases where there might be whitespace after the closing brace
+            sed -i 's/}\s*$/]/' "$file"
+            
+            echo "--- Modified content ---"
+            cat "$file"
+            echo "--- End modified ---"
+            echo "✅ Modified: $file"
+          done
+          echo "🎉 All return files have been modified"
+        else
+          echo "❌ ForSite/returntables directory not found"
+        fi
+        
+    - name: Verify changes
+      run: |
+        echo "📋 ForSite directory structure:"
+        ls -la ForSite/
+        
+        if [ -d "ForSite/Presets" ]; then
+          echo "📋 ForSite/Presets contents:"
+          ls -la ForSite/Presets/
+        fi
+        
+        if [ -d "ForSite/returntables" ]; then
+          echo "📋 ForSite/returntables contents:"
+          ls -la ForSite/returntables/
+          
+          echo "📋 Sample of modified return files:"
+          find ForSite/returntables -name "*.lua" -type f | head -3 | while read file; do
+            echo "--- Content of $file ---"
+            cat "$file"
+            echo "--- End of $file ---"
+          done
+        fi
+        
+    - name: Commit and push changes
+      run: |
+        # Add all changes
+        git add ForSite/
+        
+        # Check if there are changes to commit
+        if git diff --staged --quiet; then
+          echo "No changes to commit"
+        else
+          # Commit changes
+          git commit -m "Auto-update: Copy and modify repository structure to ForSite directory
+          
+          - Copied Main/Presets to ForSite/Presets
+          - Copied Main/returntables to ForSite/returntables  
+          - Modified return files to use [] instead of {}"
+          
+          # Push changes
+          git push origin main
+          echo "✅ Changes committed and pushed successfully"
+        fi
+        
+    - name: Create summary
+      run: |
+        echo "🎯 Workflow Summary:"
+        echo "==================="
+        echo "✅ Repository structure copied to ForSite/"
+        echo "✅ Return files modified from 'return {}' to 'return []'"
+        echo "✅ All changes committed and pushed"
+        echo ""
+        echo "📁 Final ForSite structure:"
+        tree ForSite/ || ls -R ForSite/
