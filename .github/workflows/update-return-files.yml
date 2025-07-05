@@ -35,19 +35,21 @@ jobs:
       run: |
         git diff --exit-code Main/returntables/ || echo "changes=true" >> $GITHUB_OUTPUT
 
-    - name: Fetch latest changes from remote
-      run: |
-        git fetch origin main # Fetch latest changes from the remote repository
-
-    - name: Merge remote changes with rebase
-      run: |
-        git pull --rebase origin main # Rebase local changes on top of the remote changes to avoid merge commits
-
-    - name: Commit and push changes
+    - name: Commit changes if any
       if: steps.git-check.outputs.changes == 'true'
       run: |
         git config --local user.email "action@github.com"
         git config --local user.name "GitHub Action"
         git add Main/returntables/
         git commit -m "Auto-update return files based on preset changes"
-        git push origin main # Push the updates to the remote repository
+
+    - name: Fetch latest changes and rebase
+      if: steps.git-check.outputs.changes == 'true'
+      run: |
+        git fetch origin main
+        git pull --rebase origin main
+
+    - name: Push changes
+      if: steps.git-check.outputs.changes == 'true'
+      run: |
+        git push origin main
