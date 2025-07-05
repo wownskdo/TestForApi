@@ -27,47 +27,82 @@ jobs:
         # Create the ForSite directory if it doesn't exist
         mkdir -p ForSite
         
-        # Copy Main/Presets folder to ForSite/Presets
+        # Copy only new files from Main/Presets to ForSite/Presets
         if [ -d "Main/Presets" ]; then
-          cp -r Main/Presets ForSite/
-          echo "✅ Copied Main/Presets to ForSite/Presets"
+          mkdir -p ForSite/Presets
+          
+          # Find files in Main/Presets that don't exist in ForSite/Presets
+          find Main/Presets -type f | while read source_file; do
+            # Get relative path from Main/Presets
+            relative_path="${source_file#Main/Presets/}"
+            target_file="ForSite/Presets/$relative_path"
+            
+            # Only copy if target doesn't exist
+            if [ ! -f "$target_file" ]; then
+              # Create directory structure if needed
+              mkdir -p "$(dirname "$target_file")"
+              cp "$source_file" "$target_file"
+              echo "✅ Added new file: $target_file"
+            else
+              echo "⏭️  Skipped existing file: $target_file"
+            fi
+          done
         else
           echo "❌ Main/Presets directory not found"
         fi
         
-        # Copy Main/returntables folder to ForSite/returntables
+        # Copy only new files from Main/returntables to ForSite/returntables
         if [ -d "Main/returntables" ]; then
-          cp -r Main/returntables ForSite/
-          echo "✅ Copied Main/returntables to ForSite/returntables"
+          mkdir -p ForSite/returntables
+          
+          # Find files in Main/returntables that don't exist in ForSite/returntables
+          find Main/returntables -type f | while read source_file; do
+            # Get relative path from Main/returntables
+            relative_path="${source_file#Main/returntables/}"
+            target_file="ForSite/returntables/$relative_path"
+            
+            # Only copy if target doesn't exist
+            if [ ! -f "$target_file" ]; then
+              # Create directory structure if needed
+              mkdir -p "$(dirname "$target_file")"
+              cp "$source_file" "$target_file"
+              echo "✅ Added new file: $target_file"
+            else
+              echo "⏭️  Skipped existing file: $target_file"
+            fi
+          done
         else
           echo "❌ Main/returntables directory not found"
         fi
         
-    - name: Modify return files content
+    - name: Modify only new return files content
       run: |
-        # Find all .lua files in ForSite/returntables and modify their content
+        # Find all newly copied .lua files in ForSite/returntables and modify their content
         if [ -d "ForSite/returntables" ]; then
-          find ForSite/returntables -name "*.lua" -type f | while read file; do
-            echo "🔄 Processing: $file"
-            echo "--- Original content ---"
-            cat "$file"
-            echo "--- End original ---"
-            
-            # Use sed to replace the opening brace after 'return' with [
-            sed -i 's/return\s*{/return [/' "$file"
-            
-            # Use sed to replace the closing brace at the end with ]
-            sed -i 's/}$/]/' "$file"
-            
-            # Handle cases where there might be whitespace after the closing brace
-            sed -i 's/}\s*$/]/' "$file"
-            
-            echo "--- Modified content ---"
-            cat "$file"
-            echo "--- End modified ---"
-            echo "✅ Modified: $file"
+          # Get list of files that were just copied (not in git yet)
+          git status --porcelain ForSite/returntables/ | grep "^A\|^??" | cut -c4- | while read new_file; do
+            if [[ "$new_file" == *.lua ]]; then
+              echo "🔄 Processing new file: $new_file"
+              echo "--- Original content ---"
+              cat "$new_file"
+              echo "--- End original ---"
+              
+              # Use sed to replace the opening brace after 'return' with [
+              sed -i 's/return\s*{/return [/' "$new_file"
+              
+              # Use sed to replace the closing brace at the end with ]
+              sed -i 's/}$/]/' "$new_file"
+              
+              # Handle cases where there might be whitespace after the closing brace
+              sed -i 's/}\s*$/]/' "$new_file"
+              
+              echo "--- Modified content ---"
+              cat "$new_file"
+              echo "--- End modified ---"
+              echo "✅ Modified new file: $new_file"
+            fi
           done
-          echo "🎉 All return files have been modified"
+          echo "🎉 All new return files have been modified"
         else
           echo "❌ ForSite/returntables directory not found"
         fi
@@ -86,12 +121,8 @@ jobs:
           echo "📋 ForSite/returntables contents:"
           ls -la ForSite/returntables/
           
-          echo "📋 Sample of modified return files:"
-          find ForSite/returntables -name "*.lua" -type f | head -3 | while read file; do
-            echo "--- Content of $file ---"
-            cat "$file"
-            echo "--- End of $file ---"
-          done
+          echo "📋 Git status of ForSite changes:"
+          git status --porcelain ForSite/
         fi
         
     - name: Commit and push changes
@@ -101,14 +132,17 @@ jobs:
         
         # Check if there are changes to commit
         if git diff --staged --quiet; then
-          echo "No changes to commit"
+          echo "No new changes to commit"
         else
-          # Commit changes
-          git commit -m "Auto-update: Copy and modify repository structure to ForSite directory
+          # Count new files
+          new_files_count=$(git diff --staged --name-only | wc -l)
           
-          - Copied Main/Presets to ForSite/Presets
-          - Copied Main/returntables to ForSite/returntables  
-          - Modified return files to use [] instead of {}"
+          # Commit changes
+          git commit -m "Auto-update: Add new files to ForSite directory
+          
+          - Added $new_files_count new files from Main/ to ForSite/
+          - Modified new return files to use [] instead of {}
+          - Existing files in ForSite/ were preserved unchanged"
           
           # Push changes
           git push origin main
@@ -119,8 +153,9 @@ jobs:
       run: |
         echo "🎯 Workflow Summary:"
         echo "==================="
-        echo "✅ Repository structure copied to ForSite/"
-        echo "✅ Return files modified from 'return {}' to 'return []'"
+        echo "✅ Only new files copied to ForSite/"
+        echo "✅ Existing files in ForSite/ preserved unchanged"
+        echo "✅ New return files modified from 'return {}' to 'return []'"
         echo "✅ All changes committed and pushed"
         echo ""
         echo "📁 Final ForSite structure:"
