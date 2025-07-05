@@ -1,4 +1,4 @@
-return [
+return {
     "AURORA – Runaway",
     "Adele – Someone Like You",
     "BTS – The Truth Untold",
@@ -19,4 +19,4 @@ return [
     "Yiruma – Kiss the Rain",
     "Yiruma – River Flows in You",
     "Yoko Shimomura – Dearly Beloved"
-]
+}

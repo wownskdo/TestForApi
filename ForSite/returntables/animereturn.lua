@@ -1,4 +1,4 @@
-return [
+return {
     "Angel Beats – My Soul, Your Beats!",
     "Attack on Titan – Guren no Yumiya",
     "Chainsaw Man – Kick Back",
@@ -12,6 +12,10 @@ return [
     "K-On! – Don't Say Lazy",
     "Kimi no Na wa – Sparkle",
     "Naruto – Blue Bird",
+    "Omori - By Your Side",
+    "Omori - Final Duet",
+    "Omori - Title",
+    "Omori Ost 168 - Omori",
     "One Piece – We Are!",
     "One Punch Man – The Hero!!",
     "Solo Leveling S2 - REVIVER",
@@ -19,5 +23,7 @@ return [
     "Sword Art Online – Crossing Field",
     "Tokyo Ghoul – Unravel",
     "Violet Evergarden – Sincerely",
-    "Your Lie in April – Again"
-]
+    "Your Lie in April – Again",
+    "g",
+    "tst"
+}
