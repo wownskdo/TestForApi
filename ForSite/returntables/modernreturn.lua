@@ -15,6 +15,7 @@ return [
     "JVKE – golden hour",
     "Jamie Duffy - Solas",
     "Joji – Glimpse of Us",
+    "Kanye West - Runaway",
     "Lady Gaga – Shallow",
     "Lana Del Rey – Young and Beautiful",
     "Lewis Capaldi – Someone You Loved",
