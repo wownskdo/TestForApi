@@ -1,4 +1,4 @@
-name: Update Lua Return Files
+name: Update Site Return Files
 
 on:
   push:
