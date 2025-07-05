@@ -24,6 +24,5 @@ return {
     "Tokyo Ghoul – Unravel",
     "Violet Evergarden – Sincerely",
     "Your Lie in April – Again",
-    "g",
     "tst"
 }
