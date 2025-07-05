@@ -1,0 +1,55 @@
+name: Update Lua Return Files
+
+on:
+  push:
+    paths:
+      - 'ForSite/Presets/**'
+  pull_request:
+    paths:
+      - 'ForSite/Presets/**'
+
+permissions:
+  contents: write
+
+jobs:
+  update-return-files:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      with:
+        token: ${{ secrets.PAT_TOKEN }}
+        fetch-depth: 0 # Ensures full history is fetched, needed for pull operations
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.9'
+
+    - name: Update return files
+      run: python .github/scripts/sitereturn.py
+
+    - name: Check for changes
+      id: git-check
+      run: |
+        git diff --exit-code Main/returntables/ || echo "changes=true" >> $GITHUB_OUTPUT
+
+    - name: Commit changes if any
+      if: steps.git-check.outputs.changes == 'true'
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git add Main/returntables/
+        git commit -m "Auto-update return files based on preset changes"
+
+    - name: Fetch latest changes and rebase
+      if: steps.git-check.outputs.changes == 'true'
+      run: |
+        git fetch origin main
+        git pull --rebase origin main
+
+    - name: Push changes
+      if: steps.git-check.outputs.changes == 'true'
+      run: |
+        git push origin main
