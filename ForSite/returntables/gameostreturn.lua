@@ -16,6 +16,9 @@ return {
     "Sonic – Green Hill Zone",
     "Stardew Valley – Spring (It's a Big World Outside)",
     "Super Mario Galaxy – Gusty Garden",
+    "The Living Tombstone - Die In A Fire",
+    "The Living Tombstone - I Got No Time",
+    "The Living Tombstone - It's Been So Long",
     "Undertale – His Theme",
     "Undertale – Megalovania",
     "Zelda – Song of Storms"
