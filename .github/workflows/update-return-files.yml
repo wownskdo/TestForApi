@@ -35,6 +35,10 @@ jobs:
       run: |
         git diff --exit-code Main/returntables/ || echo "changes=true" >> $GITHUB_OUTPUT
 
+    - name: Pull remote changes
+      run: |
+        git pull origin main --rebase || exit 0 # Rebase to avoid merge conflicts
+
     - name: Commit and push changes
       if: steps.git-check.outputs.changes == 'true'
       run: |
@@ -42,4 +46,4 @@ jobs:
         git config --local user.name "GitHub Action"
         git add Main/returntables/
         git commit -m "Auto-update return files based on preset changes"
-        git push
+        git push origin main
