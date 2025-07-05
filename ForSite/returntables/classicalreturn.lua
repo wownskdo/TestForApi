@@ -2,6 +2,8 @@ return {
     "Alexis Ffrench – Bluebird",
     "Bach – Prelude in C Major",
     "Bach – Toccata and Fugue in D Minor",
+    "Beethoven - Moonlight Sonata (1st Movement)",
+    "Beethoven - Moonlight Sonata (2nd Movement)",
     "Beethoven – Für Elise",
     "Beethoven – Moonlight Sonata (3rd movement)",
     "Beethoven – Pathetique Sonata",
