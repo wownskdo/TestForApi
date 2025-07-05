@@ -1,4 +1,4 @@
-name: Update Site Return Files
+name: Update ForSite Lua Return Files
 
 on:
   push:
@@ -12,7 +12,7 @@ permissions:
   contents: write
 
 jobs:
-  update-return-files:
+  update-forsite-return-files:
     runs-on: ubuntu-latest
     
     steps:
@@ -20,36 +20,26 @@ jobs:
       uses: actions/checkout@v4
       with:
         token: ${{ secrets.PAT_TOKEN }}
-        fetch-depth: 0 # Ensures full history is fetched, needed for pull operations
+        fetch-depth: 0
 
     - name: Set up Python
       uses: actions/setup-python@v4
       with:
         python-version: '3.9'
 
-    - name: Update return files
+    - name: Update ForSite return files
       run: python .github/scripts/sitereturn.py
 
     - name: Check for changes
       id: git-check
       run: |
-        git diff --exit-code Main/returntables/ || echo "changes=true" >> $GITHUB_OUTPUT
+        git diff --exit-code ForSite/returntables/ || echo "changes=true" >> $GITHUB_OUTPUT
 
-    - name: Commit changes if any
+    - name: Commit and push changes
       if: steps.git-check.outputs.changes == 'true'
       run: |
         git config --local user.email "action@github.com"
         git config --local user.name "GitHub Action"
-        git add Main/returntables/
-        git commit -m "Auto-update return files based on preset changes"
-
-    - name: Fetch latest changes and rebase
-      if: steps.git-check.outputs.changes == 'true'
-      run: |
-        git fetch origin main
-        git pull --rebase origin main
-
-    - name: Push changes
-      if: steps.git-check.outputs.changes == 'true'
-      run: |
-        git push origin main
+        git add ForSite/returntables/
+        git commit -m "Auto-update ForSite return files based on preset changes"
+        git push
