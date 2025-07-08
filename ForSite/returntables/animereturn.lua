@@ -18,6 +18,7 @@ return {
     "Omori Ost 168 - Omori",
     "One Piece – We Are!",
     "One Punch Man – The Hero!!",
+    "RADWIMPS - Suzume no Tojimari Soundtrack Medley",
     "Solo Leveling S2 - REVIVER",
     "Spirited Away – Always With Me",
     "Sword Art Online – Crossing Field",
