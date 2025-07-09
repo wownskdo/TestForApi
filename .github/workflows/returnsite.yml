@@ -1,18 +1,19 @@
-name: Update ForSite Lua Return Files
+name: Push ForSite Changes
 
 on:
   push:
     paths:
-      - 'ForSite/Presets/**'
+      - 'ForSite/Presets/**'  # Keep this for manual changes to ForSite/Presets
   pull_request:
     paths:
       - 'ForSite/Presets/**'
+  workflow_dispatch:  # Added to allow triggering from YML2 after site copy
 
 permissions:
   contents: write
 
 jobs:
-  update-forsite-return-files:
+  push-forsite-changes:
     runs-on: ubuntu-latest
     
     steps:
@@ -30,16 +31,73 @@ jobs:
     - name: Update ForSite return files
       run: python .github/scripts/sitereturn.py
 
-    - name: Check for changes
+    - name: Check for changes in ForSite
       id: git-check
       run: |
-        git diff --exit-code ForSite/returntables/ || echo "changes=true" >> $GITHUB_OUTPUT
+        # Check for any changes in ForSite directory
+        git add ForSite/
+        if git diff --staged --quiet; then
+          echo "No changes to push in ForSite"
+          echo "changes=false" >> $GITHUB_OUTPUT
+        else
+          echo "changes=true" >> $GITHUB_OUTPUT
+        fi
 
-    - name: Commit and push changes
+    - name: Commit and push all ForSite changes
       if: steps.git-check.outputs.changes == 'true'
       run: |
         git config --local user.email "action@github.com"
         git config --local user.name "GitHub Action"
-        git add ForSite/returntables/
-        git commit -m "Auto-update ForSite return files based on preset changes"
-        git push
+        
+        # Count changes
+        changed_files=$(git diff --staged --name-only | wc -l)
+        
+        # Commit all ForSite changes
+        git commit -m "Auto-push ForSite changes
+        
+        - Updated ForSite/returntables/ based on preset changes
+        - Total files changed: $changed_files
+        - Triggered by site copy workflow completion"
+        
+        # Pull latest changes before pushing
+        git fetch origin main
+        git pull --rebase origin main
+        
+        # Push changes with retry logic
+        max_retries=3
+        retry_count=0
+        
+        while [ $retry_count -lt $max_retries ]; do
+          if git push origin main; then
+            echo "✅ ForSite changes pushed successfully"
+            break
+          else
+            retry_count=$((retry_count + 1))
+            echo "⚠️  Push failed, attempt $retry_count/$max_retries"
+            
+            if [ $retry_count -lt $max_retries ]; then
+              echo "🔄 Pulling latest changes and retrying..."
+              git pull origin main --rebase
+              sleep 2
+            else
+              echo "❌ Failed to push after $max_retries attempts"
+              exit 1
+            fi
+          fi
+        done
+
+    - name: Workflow completion summary
+      run: |
+        echo "🎉 Workflow Chain Completed Successfully!"
+        echo "========================================"
+        echo "✅ YML1: Updated Main/returntables/"
+        echo "✅ YML2: Copied files to ForSite/ and modified return files"
+        echo "✅ YML3: Pushed ForSite changes (this workflow)"
+        echo ""
+        if [ "${{ steps.git-check.outputs.changes }}" == "true" ]; then
+          echo "✅ ForSite changes were committed and pushed"
+        else
+          echo "ℹ️  No ForSite changes needed to be pushed"
+        fi
+        echo ""
+        echo "All workflows in the chain have completed successfully."
