@@ -24,6 +24,7 @@ return {
     "Super Mario Galaxy – Gusty Garden",
     "The Elder Scrolls V Skyrim – Dragonborn",
     "The Living Tombstone - Die In A Fire",
+    "The Living Tombstone - Five Nights At Freddy's Song",
     "The Living Tombstone - I Got No Time",
     "The Living Tombstone - It's Been So Long",
     "Undertale - Fallen Down",
