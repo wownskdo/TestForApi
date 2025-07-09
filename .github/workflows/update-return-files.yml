@@ -10,6 +10,7 @@ on:
 
 permissions:
   contents: write
+  actions: write  # Added permission to trigger other workflows
 
 jobs:
   update-return-files:
@@ -53,3 +54,28 @@ jobs:
       if: steps.git-check.outputs.changes == 'true'
       run: |
         git push origin main
+
+    # New step to trigger YML2 (sitecopy workflow)
+    - name: Trigger Site Copy Workflow
+      if: steps.git-check.outputs.changes == 'true'
+      uses: actions/github-script@v7
+      with:
+        github-token: ${{ secrets.PAT_TOKEN }}
+        script: |
+          const result = await github.rest.actions.createWorkflowDispatch({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            workflow_id: 'sitecopy.yml',
+            ref: 'main'
+          });
+          console.log('Triggered sitecopy workflow:', result.status);
+
+    # Alternative method if the above doesn't work
+    - name: Trigger Site Copy Workflow (Alternative)
+      if: steps.git-check.outputs.changes == 'true'
+      run: |
+        curl -X POST \
+          -H "Authorization: token ${{ secrets.PAT_TOKEN }}" \
+          -H "Accept: application/vnd.github.v3+json" \
+          -d '{"ref":"main"}' \
+          https://api.github.com/repos/${{ github.repository }}/actions/workflows/sitecopy.yml/dispatches
