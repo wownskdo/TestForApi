@@ -134,55 +134,17 @@ jobs:
           git status --porcelain ForSite/
         fi
 
-    - name: Check for changes to commit
+    - name: Check for changes to stage
       id: git-check
       run: |
         git add ForSite/
         if git diff --staged --quiet; then
-          echo "No new changes to commit"
+          echo "No new changes to stage"
           echo "changes=false" >> $GITHUB_OUTPUT
         else
           echo "changes=true" >> $GITHUB_OUTPUT
+          echo "Changes detected - will trigger YML3 to handle commit and push"
         fi
-        
-    - name: Commit and push changes
-      if: steps.git-check.outputs.changes == 'true'
-      run: |
-        # Count new files
-        new_files_count=$(git diff --staged --name-only | wc -l)
-        
-        # Commit changes
-        git commit -m "Auto-update: Add new files to ForSite directory
-        
-        - Added $new_files_count new files from Main/ to ForSite/
-        - Modified new return files to use [] instead of {}
-        - Existing files in ForSite/ were preserved unchanged"
-        
-        # Pull again before pushing (in case of concurrent changes)
-        git pull origin main --rebase
-        
-        # Push changes with retry logic
-        max_retries=3
-        retry_count=0
-        
-        while [ $retry_count -lt $max_retries ]; do
-          if git push origin main; then
-            echo "✅ Changes committed and pushed successfully"
-            break
-          else
-            retry_count=$((retry_count + 1))
-            echo "⚠️  Push failed, attempt $retry_count/$max_retries"
-            
-            if [ $retry_count -lt $max_retries ]; then
-              echo "🔄 Pulling latest changes and retrying..."
-              git pull origin main --rebase
-              sleep 2
-            else
-              echo "❌ Failed to push after $max_retries attempts"
-              exit 1
-            fi
-          fi
-        done
         
     - name: Create summary
       if: steps.git-check.outputs.changes == 'true'
@@ -192,14 +154,13 @@ jobs:
         echo "✅ Only new files copied to ForSite/"
         echo "✅ Existing files in ForSite/ preserved unchanged"
         echo "✅ New return files modified from 'return {}' to 'return []'"
-        echo "✅ All changes committed and pushed"
+        echo "✅ Changes staged and ready for YML3 to push"
         echo ""
         echo "📁 Final ForSite structure:"
         tree ForSite/ || ls -R ForSite/
 
-    # New step to trigger YML3 (returnsite workflow) only if changes were made
+    # Trigger YML3 (returnsite workflow) to handle the push - always trigger after site copy
     - name: Trigger Return Site Workflow
-      if: steps.git-check.outputs.changes == 'true'
       uses: actions/github-script@v7
       with:
         github-token: ${{ secrets.PAT_TOKEN }}
@@ -214,7 +175,6 @@ jobs:
 
     # Alternative method if the above doesn't work
     - name: Trigger Return Site Workflow (Alternative)
-      if: steps.git-check.outputs.changes == 'true'
       run: |
         curl -X POST \
           -H "Authorization: token ${{ secrets.PAT_TOKEN }}" \
