@@ -16,6 +16,7 @@ return {
     "Omori - Final Duet",
     "Omori - Title",
     "Omori Ost 168 - Omori",
+    "One Piece - Bink's Sake",
     "One Piece – We Are!",
     "One Punch Man – The Hero!!",
     "RADWIMPS - Suzume no Tojimari Soundtrack Medley",
