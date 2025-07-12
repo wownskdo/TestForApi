@@ -1,3 +1,3 @@
-return [
+return {
     "StevesLavaChicken_41W"
-]
+}
