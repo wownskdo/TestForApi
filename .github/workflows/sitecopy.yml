@@ -36,9 +36,16 @@ jobs:
         # Create the ForSite directory if it doesn't exist
         mkdir -p ForSite
         
+        # Initialize counters for tracking
+        preset_copied=0
+        preset_skipped=0
+        return_copied=0
+        return_skipped=0
+        
         # Copy only new files from Main/Presets to ForSite/Presets
         if [ -d "Main/Presets" ]; then
           mkdir -p ForSite/Presets
+          echo "📁 Processing Main/Presets directory..."
           
           # Find files in Main/Presets that don't exist in ForSite/Presets
           find Main/Presets -type f | while read source_file; do
@@ -51,11 +58,14 @@ jobs:
               # Create directory structure if needed
               mkdir -p "$(dirname "$target_file")"
               cp "$source_file" "$target_file"
-              echo "✅ Added new file: $target_file"
+              echo "✅ Added new preset file: $target_file"
+              preset_copied=$((preset_copied + 1))
             else
-              echo "⏭️  Skipped existing file: $target_file"
+              echo "⏭️  Skipped existing preset file: $target_file"
+              preset_skipped=$((preset_skipped + 1))
             fi
           done
+          echo "📊 Preset files: $preset_copied copied, $preset_skipped skipped"
         else
           echo "❌ Main/Presets directory not found"
         fi
@@ -63,6 +73,7 @@ jobs:
         # Copy only new files from Main/returntables to ForSite/returntables
         if [ -d "Main/returntables" ]; then
           mkdir -p ForSite/returntables
+          echo "📁 Processing Main/returntables directory..."
           
           # Find files in Main/returntables that don't exist in ForSite/returntables
           find Main/returntables -type f | while read source_file; do
@@ -75,11 +86,14 @@ jobs:
               # Create directory structure if needed
               mkdir -p "$(dirname "$target_file")"
               cp "$source_file" "$target_file"
-              echo "✅ Added new file: $target_file"
+              echo "✅ Added new return file: $target_file"
+              return_copied=$((return_copied + 1))
             else
-              echo "⏭️  Skipped existing file: $target_file"
+              echo "⏭️  Skipped existing return file: $target_file"
+              return_skipped=$((return_skipped + 1))
             fi
           done
+          echo "📊 Return files: $return_copied copied, $return_skipped skipped"
         else
           echo "❌ Main/returntables directory not found"
         fi
@@ -88,27 +102,29 @@ jobs:
       run: |
         # Find all newly copied .lua files in ForSite/returntables and modify their content
         if [ -d "ForSite/returntables" ]; then
-          # Get list of files that were just copied (not in git yet)
-          git status --porcelain ForSite/returntables/ | grep "^A\|^??" | cut -c4- | while read new_file; do
-            if [[ "$new_file" == *.lua ]]; then
-              echo "🔄 Processing new file: $new_file"
-              echo "--- Original content ---"
-              cat "$new_file"
-              echo "--- End original ---"
+          echo "🔄 Processing new return files..."
+          
+          # Check git status to see what files are new/modified
+          git add ForSite/returntables/
+          
+          # Get list of files that are new or modified
+          git status --porcelain ForSite/returntables/ | while read status_line; do
+            # Extract the file path (remove the status prefix)
+            file_path=$(echo "$status_line" | sed 's/^...//')
+            
+            if [[ "$file_path" == *.lua ]]; then
+              echo "🔄 Processing new return file: $file_path"
               
               # Use sed to replace the opening brace after 'return' with [
-              sed -i 's/return\s*{/return [/' "$new_file"
+              sed -i 's/return\s*{/return [/' "$file_path"
               
               # Use sed to replace the closing brace at the end with ]
-              sed -i 's/}$/]/' "$new_file"
+              sed -i 's/}$/]/' "$file_path"
               
               # Handle cases where there might be whitespace after the closing brace
-              sed -i 's/}\s*$/]/' "$new_file"
+              sed -i 's/}\s*$/]/' "$file_path"
               
-              echo "--- Modified content ---"
-              cat "$new_file"
-              echo "--- End modified ---"
-              echo "✅ Modified new file: $new_file"
+              echo "✅ Modified new return file: $file_path"
             fi
           done
           echo "🎉 All new return files have been modified"
@@ -119,45 +135,57 @@ jobs:
     - name: Verify changes
       run: |
         echo "📋 ForSite directory structure:"
-        ls -la ForSite/
+        if [ -d "ForSite" ]; then
+          find ForSite -type f | head -20
+          echo "📊 Total files in ForSite: $(find ForSite -type f | wc -l)"
+        else
+          echo "❌ ForSite directory not found"
+        fi
         
         if [ -d "ForSite/Presets" ]; then
-          echo "📋 ForSite/Presets contents:"
-          ls -la ForSite/Presets/
+          echo "📋 ForSite/Presets file count: $(find ForSite/Presets -type f | wc -l)"
         fi
         
         if [ -d "ForSite/returntables" ]; then
-          echo "📋 ForSite/returntables contents:"
-          ls -la ForSite/returntables/
-          
-          echo "📋 Git status of ForSite changes:"
-          git status --porcelain ForSite/
+          echo "📋 ForSite/returntables file count: $(find ForSite/returntables -type f | wc -l)"
         fi
 
     - name: Check for changes to stage
       id: git-check
       run: |
+        # Add all ForSite changes
         git add ForSite/
+        
+        # Check if there are any staged changes
         if git diff --staged --quiet; then
           echo "No new changes to stage"
           echo "changes=false" >> $GITHUB_OUTPUT
         else
           echo "changes=true" >> $GITHUB_OUTPUT
-          echo "Changes detected - will trigger YML3 to handle commit and push"
+          echo "Changes detected:"
+          git diff --staged --name-only
+          echo "Will trigger returnsite.yml to handle commit and push"
         fi
         
     - name: Create summary
-      if: steps.git-check.outputs.changes == 'true'
       run: |
         echo "🎯 Workflow Summary:"
         echo "==================="
-        echo "✅ Only new files copied to ForSite/"
-        echo "✅ Existing files in ForSite/ preserved unchanged"
-        echo "✅ New return files modified from 'return {}' to 'return []'"
-        echo "✅ Changes staged and ready for YML3 to push"
-        echo ""
-        echo "📁 Final ForSite structure:"
-        tree ForSite/ || ls -R ForSite/
+        if [ -d "ForSite/Presets" ]; then
+          echo "📁 Preset files in ForSite: $(find ForSite/Presets -type f | wc -l)"
+        fi
+        if [ -d "ForSite/returntables" ]; then
+          echo "📁 Return files in ForSite: $(find ForSite/returntables -type f | wc -l)"
+        fi
+        echo "📋 Git status:"
+        git status --porcelain ForSite/ || echo "No changes detected"
+
+    # Wait 1 minute before triggering the next workflow
+    - name: Wait 1 minute
+      run: |
+        echo "⏰ Waiting 1 minute before triggering returnsite.yml..."
+        sleep 60
+        echo "✅ Wait complete, triggering returnsite workflow now"
 
     # Trigger YML3 (returnsite workflow) to handle the push - always trigger after site copy
     - name: Trigger Return Site Workflow
