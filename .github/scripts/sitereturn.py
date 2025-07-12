@@ -13,7 +13,7 @@ PRESET_CATEGORIES = [
     {"name": "Classical", "returnFile": "classicalreturn"},
     {"name": "Modern", "returnFile": "modernreturn"},
     {"name": "Anime", "returnFile": "animereturn"},
-    {"name": "Movie", "returnFile": "moviereturn.lua"},
+    {"name": "Movie", "returnFile": "moviereturn"},
     {"name": "Emotional", "returnFile": "emotionalreturn"},
     {"name": "Game OST", "returnFile": "gameostreturn"},
     {"name": "Others", "returnFile": "othersreturn"}
