@@ -3,7 +3,6 @@ return {
     "Chrono Trigger – Corridors of Time",
     "Cuphead – Floral Fury",
     "Deltarune – Field of Hopes and Dreams",
-    "FNAF – It's Been So Long",
     "Final Fantasy – To Zanarkand",
     "Genshin Impact – Rex Incognito",
     "Halo – Main Theme",
