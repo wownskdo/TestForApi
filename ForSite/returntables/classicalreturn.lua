@@ -13,6 +13,7 @@ return {
     "Grieg – In the Hall of the Mountain King",
     "Handel – Sarabande",
     "Joep Beving – Ab Ovo",
+    "Liszt - La Campanella (G Minor)",
     "Liszt – Consolation No. 3",
     "Liszt – Hungarian Rhapsody No. 2",
     "Ludovico Einaudi – Experience",
