@@ -28,6 +28,7 @@ return {
     "Satie – Gnossienne No.1",
     "Schubert – Ave Maria",
     "Tchaikovsky – Swan Lake Theme",
+    "Vivaldi - Summer (Four Seasons)",
     "Vivaldi – Spring (Four Seasons)",
     "Yiruma – Indigo"
 }
