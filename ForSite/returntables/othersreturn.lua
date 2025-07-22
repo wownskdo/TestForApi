@@ -9,6 +9,7 @@ return {
     "Fur Elise x Still D.R.E",
     "Internet Meme – Oh No Sound Effect",
     "Linga Guli Guli",
+    "Malice Mizer - Le Ciel",
     "Moonlight Sonata x Still D.R.E",
     "Nyan Cat Theme",
     "Rick Astley – Never Gonna Give You Up",
