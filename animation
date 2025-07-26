@@ -166,7 +166,7 @@ local function playAnimation()
             
             wait(0.5)
             screenGui:Destroy()
-            loadstring(game:HttpGet("https://raw.githubusercontent.com/wownskdo/TestForApi/refs/heads/main/script"))()
+            loadstring(game:HttpGet("https://gist.githubusercontent.com/wownskdo/4602a52f715810caab645a88ede5efd7/raw/d3288a5fc1c40749cca3c6028808bb682a7dfe5b/scriptlink"))()
         end)
     end)
 end
