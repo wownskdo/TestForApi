@@ -19,6 +19,7 @@ return {
     "Lady Gaga – Shallow",
     "Lana Del Rey – Young and Beautiful",
     "Lewis Capaldi – Someone You Loved",
+    "Mitski - My Love Mine All Mine",
     "Mitski – Washing Machine Heart",
     "Noah Kahan – Stick Season",
     "Olivia Rodrigo – drivers license",
